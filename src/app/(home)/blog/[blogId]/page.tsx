@@ -1,7 +1,11 @@
 'use client';
+import { useAppDispatch, useAppSelector } from '@/core/redux/clientStore';
+import { RootState } from '@/core/redux/store';
 import axiosInstance from '@/core/utils/axoisInst';
 import { constants } from '@/core/utils/constants';
 import { parseHtml } from '@/core/utils/helper';
+import blogApi from '@/modules/blog/blogApi';
+import { BlogType } from '@/modules/blog/blogType';
 import Link from 'next/dist/client/link';
 import Image from 'next/image';
 import { useParams, useRouter } from 'next/navigation';
@@ -11,36 +15,36 @@ import { BlogItemType } from '../(components)/BlogItem';
 export default function BlogItem() {
   const router = useRouter();
   const param = useParams();
+  const blogId = param.blogId as string;
+  const dispatch = useAppDispatch();
   const [url, setUrl] = useState('');
   const [news, setNews] = useState<BlogItemType[]>([]);
-  const [blogItem, setBlogItem] = useState<BlogItemType>({
-    id: null,
-    title: '',
-    description: '',
-    content: '',
-    direction: '',
-    date: null,
-    publisher: '',
-    coverImage: '',
-    blogCategory: null,
-  });
+
+  console.log(param, 'param');
+
+  // const [blogItem, setBlogItem] = useState<BlogItemType>({
+  //   id: null,
+  //   title: '',
+  //   description: '',
+  //   content: '',
+  //   direction: '',
+  //   date: null,
+  //   publisher: '',
+  //   coverImage: '',
+  //   blogCategory: null,
+  // });
 
   useEffect(() => {
-    if (param?.id) {
-      axiosInstance
-        .get('/blog/' + param.id)
-        .then((item) => {
-          console.log('API Response:', item.data);
-          setBlogItem(item.data.data);
-        })
-        .catch((err) => {
-          console.error('Error fetching blog:', err);
-          if (err.response.status === 404) {
-            router.push('/404');
-          }
-        });
-    }
+    dispatch(blogApi.endpoints.getEachBlog.initiate(parseInt(blogId)));
+  }, [dispatch, blogId]);
 
+  const blogItem = useAppSelector(
+    (state: RootState) =>
+      state.baseApi.queries[`getEachBlog-${blogId}`]?.data as BlogType
+  );
+
+  console.log(blogId, 'blogId');
+  useEffect(() => {
     axiosInstance
       .get('/news/latest/3/')
       .then((item) => {
@@ -77,7 +81,7 @@ export default function BlogItem() {
       <main className="blog_item_main">
         <div className="featured-img relative">
           <Image
-            src={constants.baseUrl + blogItem.coverImage}
+            src={blogItem?.coverImage as string}
             alt="cover-image"
             width={100}
             height={100}
@@ -93,7 +97,7 @@ export default function BlogItem() {
         </div>
         <section className="blog_item_section">
           <article>
-            <h2>{blogItem.title}</h2>
+            <h2>{blogItem?.title}</h2>
             <div className="socials_container">
               <a
                 rel="noreferrer"
@@ -128,7 +132,7 @@ export default function BlogItem() {
               </a>
             </div>
 
-            {parseHtml(blogItem.content ?? '')}
+            {parseHtml(blogItem?.content ?? '')}
           </article>
           <aside>
             <div className="relative">

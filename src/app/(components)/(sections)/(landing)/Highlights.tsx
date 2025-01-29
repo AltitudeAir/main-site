@@ -16,8 +16,8 @@ export default function Highlights() {
     <section className="highlights" id="highlights">
       <div className="animation-observer-helper" />
       <div className="highlights_container">
-        <div className="border-[1rem] border-[#a7b9c7] max-w-60 py-14 px-20 mr-[10vw] flex items-center">
-          <h2 className="text-5xl font-gilroy text-custom-blue m-0">
+        <div className="border-[1rem] border-[#972622] max-w-60 py-14 px-20 mr-[10vw] flex items-center">
+          <h2 className="text-5xl font-gilroy text-white m-0">
             WHY ALTITUDE AIR?
           </h2>
         </div>
@@ -27,7 +27,7 @@ export default function Highlights() {
             className="svg_text_container"
             style={{ animationDuration: '.1s' }}
           >
-            <div className="svg_container">
+            <div className="svg_container ">
               <Image
                 src="/icons/support.svg"
                 alt="Support svg icon"
@@ -35,7 +35,7 @@ export default function Highlights() {
                 height={100}
               />
             </div>
-            <h4>Our Experienced Team</h4>
+            <h4 className="text-white">Our Experienced Team</h4>
             <p>
               The Altitude Air Team is guided by legendary veterans of Nepal’s
               Tourism industry. Our team comprises highly experienced pilots and
@@ -55,7 +55,7 @@ export default function Highlights() {
                 height={100}
               />
             </div>
-            <h4>We are here </h4>
+            <h4 className="text-white">We are here </h4>
             <p>
               Our reliable support system ensures we can be reached at all
               times, providing rapid responses during emergent situations. We
@@ -74,7 +74,7 @@ export default function Highlights() {
                 height={100}
               />
             </div>
-            <h4>Newest Helicopters</h4>
+            <h4 className="text-white">Newest Helicopters</h4>
             <p>
               Altitude Air’s first class fleet of Airbuses combat the Nepali
               region with ease, venturing through remote landscapes for rescue

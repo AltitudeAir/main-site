@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import axiosInstance from '@/core/utils/axoisInst';
 import { constants } from '@/core/utils/constants';
 import { useParams, useRouter } from 'next/navigation';

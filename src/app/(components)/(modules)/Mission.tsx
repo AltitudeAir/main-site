@@ -7,12 +7,12 @@ const Mission = () => {
   const moveRightPercent = 1;
 
   const circleImages = [
-    '/images/heliski.png',
+    '/images/Helsik.png',
     '/images/chasing.png',
     '/images/charter.png',
     '/images/fliming.png',
     '/images/prilimage.png',
-    '/images/moutain.png',
+    '/images/mountain.png',
     '/images/Allogo.png',
     '/images/rescue.png',
   ];
@@ -50,7 +50,7 @@ const Mission = () => {
       return (
         <div
           key={i}
-          className="absolute rounded-full overflow-hidden"
+          className="absolute rounded-full overflow-hidden "
           style={{
             width: `${imageSizes[i].width}vw`,
             height: `${imageSizes[i].height}vw`,
@@ -188,7 +188,7 @@ const Mission = () => {
             className="text-gray-600"
             style={{
               fontSize: 'clamp(-16rem, 0.9vw, 0.8rem)',
-              marginTop: '-0.5rem',
+              marginTop: '-0.3rem',
               marginBottom: '0.2rem',
             }}
           >

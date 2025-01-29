@@ -1,9 +1,7 @@
 'use client';
 // import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Formik } from 'formik';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import * as Yup from 'yup';
 // import {
 //   faFacebookSquare,
 //   faInstagramSquare,
@@ -11,6 +9,7 @@ import * as Yup from 'yup';
 //   faYoutubeSquare,
 // } from "@fortawesome/free-brands-svg-icons";
 import { parseHtml } from '@/core/utils/helper';
+import { Facebook, Instagram } from 'iconsax-react';
 import Image from 'next/image';
 import {
   default as axiosInst,
@@ -29,9 +28,7 @@ export default function FooterV2() {
   const [socialLinks, setSocialLinks] = useState({
     id: 1,
     instagram: '',
-    facebook: '',
-    youtube: '',
-    twitter: '',
+    facebook: 'https://www.facebook.com/altitude.airlines',
   });
 
   // const notificationContext = useNotificationContext();
@@ -104,6 +101,27 @@ export default function FooterV2() {
               </li>
             </ul>
           </div>
+          <div className="flex flex-col gap-2">
+            <h5>Follow Us</h5>
+            <ul className="font-gilroy md:text-sm text-xs flex  gap-4">
+              <a
+                href="https://www.facebook.com/altitude.airlines"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="cursor-pointer text-[#b33935] hover:text-white text-xs sm:text-sm md:text-lg lg:text-xl"
+              >
+                <Facebook size="24" />
+              </a>
+              <a
+                href="https://www.instagram.com/altitude.air/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="cursor-pointer text-[#b33935] hover:text-white text-xs sm:text-sm md:text-lg lg:text-xl"
+              >
+                <Instagram size="24" />
+              </a>
+            </ul>
+          </div>
           <div className="flex flex-col gap-2 max-w-80">
             {/* <h5>SUBSCRIBE TO OUR NEWSLETTER</h5>
             <p className="font-gilroy md:text-sm text-xs flex flex-col gap-4">
@@ -163,36 +181,6 @@ export default function FooterV2() {
                 </p>
               </>
             </Formik> */}
-
-            <div className="socials">
-              {socialLinks.facebook ? (
-                <a rel="noreferrer" target="_blank" href={socialLinks.facebook}>
-                  {/* <FontAwesomeIcon className="icon" icon={faFacebookSquare} /> */}
-                </a>
-              ) : null}
-
-              {socialLinks.twitter ? (
-                <a rel="noreferrer" target="_blank" href={socialLinks.twitter}>
-                  {/* <FontAwesomeIcon className="icon" icon={faTwitterSquare} /> */}
-                </a>
-              ) : null}
-
-              {socialLinks.youtube ? (
-                <a rel="noreferrer" target="_blank" href={socialLinks.youtube}>
-                  {/* <FontAwesomeIcon className="icon" icon={faYoutubeSquare} /> */}
-                </a>
-              ) : null}
-
-              {socialLinks.instagram ? (
-                <a
-                  rel="noreferrer"
-                  target="_blank"
-                  href={socialLinks.instagram}
-                >
-                  {/* <FontAwesomeIcon className="icon" icon={faInstagramSquare} /> */}
-                </a>
-              ) : null}
-            </div>
           </div>
         </div>
 

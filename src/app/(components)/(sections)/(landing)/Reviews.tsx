@@ -1,33 +1,42 @@
 'use client';
-import axiosInst from '@/core/utils/axoisInst';
 import { useEffect, useState } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 // import required modules
+import { useAppDispatch, useAppSelector } from '@/core/redux/clientStore';
+import { RootState } from '@/core/redux/store';
+import { PaginatedResponseType } from '@/core/types/responseTypes';
 import { parseHtml } from '@/core/utils/helper';
+import reviewApi from '@/modules/review/reviewApi';
+import { ReviewType } from '@/modules/review/reviewType';
 import Image from 'next/image';
 import { Autoplay, Pagination } from 'swiper/modules';
 
-interface ReviewType {
-  title: string;
-  content: string;
-  author: string;
-  rating: number;
-}
-
 export default function Reviews() {
   const [reviews, setReviews] = useState<ReviewType[] | undefined>([]);
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
-    axiosInst.get('/review/').then((result: any) => {
-      const data = result.data.data;
-      setReviews(data);
-    });
-  }, []);
+    dispatch(reviewApi.endpoints.getAllReview.initiate(1));
+  }, [dispatch]);
+
+  const sreviewData = useAppSelector(
+    (state: RootState) =>
+      state.baseApi.queries['getAllReview(1)']
+        ?.data as PaginatedResponseType<ReviewType>
+  );
+
+  // useEffect(() => {
+  //   axiosInst.get('/review/').then((result: any) => {
+  //     const data = result.data.data;
+  //     setReviews(data);
+  //   });
+  // }, []);
 
   return (
     <section className="reviews">
       <div className="review-list">
-        {reviews && (
+        <h2 className="text-center ">TESTIMONIALS</h2>
+        {sreviewData && (
           <Swiper
             pagination={{
               dynamicBullets: true,
@@ -36,12 +45,10 @@ export default function Reviews() {
             className="mySwiper"
             autoplay
           >
-            {reviews.map((review, index) => {
+            {sreviewData?.results.map((review, index) => {
               return (
                 <SwiperSlide key={index}>
                   <div className="review-item cursor-pointer">
-                    <h2>WHAT OUR CLIENTS SAY</h2>
-
                     <h3>{review.title}</h3>
                     {parseHtml(review.content)}
                     <h4>{review.author}</h4>

@@ -1,14 +1,14 @@
 'use client';
+import { useAppDispatch, useAppSelector } from '@/core/redux/clientStore';
+import { RootState } from '@/core/redux/store';
+import { PaginatedResponseType } from '@/core/types/responseTypes';
 import axiosInstance from '@/core/utils/axoisInst';
+import blogApi from '@/modules/blog/blogApi';
+import { BlogCategoryType } from '@/modules/blog/blogType';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import SideDrawer from '../(elements)/SideDrawer';
-
-interface BlogCategoriesType {
-  slug: string;
-  name: string;
-}
 
 interface ChoppersType {
   id: number;
@@ -17,9 +17,7 @@ interface ChoppersType {
 
 export default function Header() {
   const [drawer, setDrawer] = useState(false);
-  const [blogCategories, setBlogCategories] = useState<
-    BlogCategoriesType[] | undefined
-  >([]);
+  const dispatch = useAppDispatch();
   const [choppers, setChoppers] = useState<ChoppersType[] | undefined>();
 
   const showDrawerHandler = () => {
@@ -30,13 +28,16 @@ export default function Header() {
   };
 
   useEffect(() => {
-    axiosInstance.get('/category/').then((item) => {
-      let newArray = item.data.data.filter((item: any) => {
-        return item.status === true;
-      });
-      setBlogCategories(newArray);
-    });
+    dispatch(blogApi.endpoints.getAllBlogCategory.initiate(1));
+  }, [dispatch]);
 
+  const blogCategories = useAppSelector(
+    (state: RootState) =>
+      state.baseApi.queries['getAllBlogCategory(1)']
+        ?.data as PaginatedResponseType<BlogCategoryType>
+  );
+
+  useEffect(() => {
     axiosInstance.get('/chopper/').then((item) => {
       const chopperList = item.data.data;
       setChoppers(chopperList);
@@ -101,10 +102,10 @@ export default function Header() {
               <div className="sub_menu">
                 <ul>
                   {blogCategories &&
-                    blogCategories.map((item) => {
+                    blogCategories?.results.map((item, index) => {
                       return (
-                        <li key={item.slug}>
-                          <Link href={`/blog?category=${item.slug}`}>
+                        <li key={index}>
+                          <Link href={`/blog?category=${item.id}`}>
                             {item.name}
                           </Link>
                         </li>

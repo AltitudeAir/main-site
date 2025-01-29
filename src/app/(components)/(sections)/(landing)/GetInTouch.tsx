@@ -32,7 +32,7 @@ export default function GetInTouch() {
 
         <div className="enquiry_container">
           <div className="contact_container">
-            <a href={`tel:${hotline}`}>
+            <a className="w-10" href={`tel:${hotline}`}>
               <h2>{hotline}</h2>
             </a>
           </div>
