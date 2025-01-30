@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react';
 import Mission from '@/app/(components)/(modules)/Mission';
 import { useAppDispatch, useAppSelector } from '@/core/redux/hooks';
 import { RootState } from '@/core/redux/store';
-import { PaginatedResponseType } from '@/core/types/responseTypes';
 import axiosInst from '@/core/utils/axoisInst';
 import { constants } from '@/core/utils/constants';
 import { parseHtml } from '@/core/utils/helper';
@@ -61,13 +60,12 @@ export default function About() {
   });
 
   useEffect(() => {
-    dispatch(crewApi.endpoints.getAllCrew.initiate(1));
+    dispatch(crewApi.endpoints.getAllCrew.initiate());
   }, [dispatch]);
 
   const crewData = useAppSelector(
     (state: RootState) =>
-      state.baseApi.queries['getAllCrew(1)']
-        ?.data as PaginatedResponseType<CrewsType>
+      crewApi.endpoints.getAllCrew.select()(state)?.data || []
   );
 
   useEffect(() => {
@@ -218,7 +216,7 @@ export default function About() {
 
           <div className="card_container">
             {crewData &&
-              crewData.results.map((member, index) => {
+              crewData?.map((member, index) => {
                 if (member.team === 'crew') {
                   return (
                     <div className="crew_card" key={index}>
@@ -241,9 +239,7 @@ export default function About() {
                             {member.fname + ' ' + member.lname}
                           </h2>
                           <p className="type">
-                            <strong>
-                              Captain{member.type?.title?.toUpperCase()}
-                            </strong>
+                            <strong>{member.type?.title?.toUpperCase()}</strong>
                             <br />
                           </p>
                           <h3 className="cap-details">
@@ -280,7 +276,7 @@ export default function About() {
           </div>
 
           <div className="card_container">
-            {crewData?.results.map((member, index) => {
+            {crewData?.map((member, index) => {
               if (member.team === 'management') {
                 return (
                   <div className="crew_card" key={index}>
@@ -328,7 +324,7 @@ export default function About() {
           </div>
 
           <div className="card_container">
-            {crewData?.results.map((member, index) => {
+            {crewData?.map((member, index) => {
               if (member.team === 'technical') {
                 return (
                   <div className="crew_card" key={index}>
@@ -376,7 +372,7 @@ export default function About() {
           </div>
 
           <div className="card_container">
-            {crewData?.results.map((member, index) => {
+            {crewData?.map((member, index) => {
               if (member.team === 'quality') {
                 return (
                   <div className="crew_card" key={index}>
@@ -424,7 +420,7 @@ export default function About() {
           </div>
 
           <div className="card_container">
-            {crewData?.results.map((member, index) => {
+            {crewData?.map((member, index) => {
               if (member.team === 'safety') {
                 return (
                   <div className="crew_card" key={index}>

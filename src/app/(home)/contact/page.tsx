@@ -1,5 +1,6 @@
 'use client';
 import { default as axiosInstance } from '@/core/utils/axoisInst';
+import { constants } from '@/core/utils/constants';
 import { parseHtml } from '@/core/utils/helper';
 import {
   Airplane,
@@ -8,7 +9,14 @@ import {
   Location,
   MessageQuestion,
 } from 'iconsax-react';
+import Image from 'next/image';
 import { useEffect, useState } from 'react';
+import {
+  FaFacebookSquare,
+  FaInstagramSquare,
+  FaTwitterSquare,
+  FaYoutubeSquare,
+} from 'react-icons/fa';
 import PackageLocation from '../packages/[slug]/(components)/PackageLocation';
 import ContactForm from './(components)/ContactForm';
 
@@ -80,11 +88,28 @@ const ContactPage = () => {
     bookingEmail: '',
     bookingInquiry: '',
   });
+  const [socialLinks, setSocialLinks] = useState({
+    id: 1,
+    instagram: '',
+    facebook: 'https://www.facebook.com/altitude.airlines/',
+    youtube: '',
+    twitter: '',
+  });
+  const [qr, setQr] = useState('');
+  console.log('QR Code URL:', constants.baseUrl + qr);
 
   useEffect(() => {
     axiosInstance.get('/contact/').then((result) => {
       const data = result.data.data;
       setContactData(data[0]);
+    });
+    axiosInstance.get('/socialLink/').then((result) => {
+      const data = result.data.data;
+      setSocialLinks(data[0]);
+    });
+    axiosInstance.get('/general/').then((result) => {
+      const data = result.data.data;
+      setQr(data.QRcode);
     });
   }, []);
 
@@ -106,7 +131,7 @@ const ContactPage = () => {
   return (
     <div>
       <section
-        className={`relative h-[40vh] md:h-[60vh] lg:h-[80vh] w-full flex items-end justify-center`}
+        className={`relative px-10 h-[40vh] md:h-[60vh] lg:h-[80vh] w-full flex items-end justify-center`}
       >
         <div
           className="hidden absolute top-0 w-full h-full md:block"
@@ -125,16 +150,21 @@ const ContactPage = () => {
 
         <div className="absolute bottom-0 left-0 top-0 right-0 bg-gradient-to-t from-custom-bg to-custom-blue/60"></div>
       </section>
-      <main className="bg-custom-bg">
-        <div className="container mx-auto pt-10">
+      <main className="bg-custom-bg px-10">
+        {/* <div className="container mx-auto pt-10">
           <div className="px-5 py-5 bg-custom-blue text-white rounded">
             Additional Info
           </div>
-        </div>
+        </div> */}
         <div className="container mx-auto py-10">
-          <div className="flex flex-col lg:flex-row items-start justify-stretch gap-6">
+          <div className="flex flex-col lg:flex-row items-start justify-stretch gap-16">
             {contactData && (
               <aside className="shrink-0 w-full lg:max-w-md flex flex-col gap-2">
+                <div className="container mx-auto">
+                  <div className="px-5 py-5 bg-[#314666] text-white rounded">
+                    Additional Info
+                  </div>
+                </div>
                 {contactDetails.map(({ title, key, icon: Icon }) => (
                   <div
                     key={key}
@@ -162,19 +192,56 @@ const ContactPage = () => {
                     </div>
                   </div>
                 ))}
+                <div className=" qr_wrapper space-x-8 lg:space-x-5 md:space-x-36  flex items-start justify-start">
+                  <div className="socials flex flex-col ">
+                    <h2 className="text-lg mb-2 flex items-start justify-start font-bold text-custom-blue">
+                      Follow Us
+                    </h2>
+                    <div className="flex">
+                      <a href={socialLinks.facebook}>
+                        <FaFacebookSquare size={36} />
+                      </a>
+                      <a href={socialLinks.twitter}>
+                        <FaTwitterSquare size={36} />
+                      </a>
+                      <a href={socialLinks.youtube}>
+                        <FaYoutubeSquare size={36} />
+                      </a>
+                      <a href={socialLinks.instagram}>
+                        <FaInstagramSquare size={36} />
+                      </a>
+                    </div>
+                  </div>
+                  <div className="md:h-72 lg:h-72 sm:h-40 h-36 w-[1px]  border-1 bg-custom-blue"></div>
+                  <div>
+                    <h1 className="text-lg mb-2 flex items-center justify-center font-bold text-custom-blue">
+                      Scan to Pay
+                    </h1>
+                    <div className="qr">
+                      <Image
+                        src={constants.baseUrl + qr}
+                        alt="QR Code"
+                        onError={(e) => {
+                          e.currentTarget.src =
+                            '/images/errors/placeholder.webp';
+                        }}
+                        className="rounded-md"
+                        height={255}
+                        width={255}
+                      />
+                    </div>
+                  </div>
+                </div>
               </aside>
             )}
+            <div className="container mx-auto">
+              <div className="grow bg-[#314666] py-10 px-6 rounded relative">
+                <div className="absolute -left-4 top-1/2 h-[90%] border-l-[16px] border-[#314666] border-dashed transform -translate-y-1/2"></div>
 
-            <div className="grow bg-white/60 py-10 px-6 rounded">
-              <h2 className="text-2xl font-bold text-custom-blue">
-                Send Message
-              </h2>
-              {/* <p className="text-base font-normal text-custom-blue">
-                Lorem ipsum, dolor sit amet consectetur adipisicing elit. Vitae
-                tempora earum accusantium impedit voluptatum maiores?
-              </p> */}
-              <div className="mt-2">
-                <ContactForm />
+                <h2 className="text-2xl font-bold text-white">Send Message</h2>
+                <div className="mt-2">
+                  <ContactForm />
+                </div>
               </div>
             </div>
           </div>

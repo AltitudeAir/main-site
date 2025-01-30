@@ -8,7 +8,7 @@ const packagesApi = baseApi
     .injectEndpoints({
         endpoints: (builder) => ({
             getAllPackages: builder.query<PaginatedResponseType<PackagesDataType>, void>({
-                query: () => `${apiPaths.allPackagesPublicUrl}`,
+                query: () => `${apiPaths.getPackages}`,
                 providesTags: (response: any) =>
                     response
                         ? [
@@ -25,6 +25,24 @@ const packagesApi = baseApi
                 transformResponse: (response: any) => {
                     // console.log(response);
                     return response as PaginatedResponseType<PackagesDataType>;
+                },
+            }),
+
+            //get Each
+            getEachPackage: builder.query<PackagesDataType, string>({
+                query: (packageSlug) => `${apiPaths.getPackages}${packageSlug}/`,
+                providesTags: (result, error, packageSlug) => {
+                    return [{ type: 'Packages', packageSlug }];
+                },
+                serializeQueryArgs: ({ queryArgs, endpointName }) => {
+                    return `${endpointName}("${queryArgs}")`;
+                },
+                async onQueryStarted(payload, { queryFulfilled }) {
+                    try {
+                        await queryFulfilled;
+                    } catch (err) {
+                        console.log(err);
+                    }
                 },
             }),
             // getPackagesLimit: builder.query<PackagesDataType[], number>({

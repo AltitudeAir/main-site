@@ -60,7 +60,7 @@ const Navbar = () => {
         </div>
       </div>
       {isStickyLogoVisible && (
-        <div className="fixed top-0 sm:left-0 w-full left-2 z-40">
+        <div className="fixed top-0 sm:left-2 w-full left-2 z-40 transition-transform duration-300">
           <div className="lg:container mx-auto ">
             <div className="bg-white w-24 flex justify-center">
               <Link href="/" className="flex items-center relatives h-16 w-16">

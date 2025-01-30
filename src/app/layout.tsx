@@ -15,6 +15,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import 'swiper/css';
 import 'swiper/css/pagination';
 import Navbar from './(components)/(modules)/Navbar';
+import SocialIcon from './(components)/(modules)/SocialIcon';
 
 const inter = Inter({ subsets: ['latin'] });
 const gilroy = localFont({
@@ -77,6 +78,7 @@ export default function RootLayout({
             <Navbar />
             {children}
             <FooterV2 />
+            <SocialIcon />
           </main>
         </Provider>
       </body>
