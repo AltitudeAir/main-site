@@ -11,7 +11,10 @@ export const baseApi = createApi({
         'Gallery',
         'News',
         'Crew',
-        'Service'
+        'Service',
+        'Review',
+        'Blog',
+        'BlogCategory'
     ],
     endpoints: () => ({}),
 });

@@ -4,7 +4,6 @@ import axiosInstance from '@/core/utils/axoisInst';
 import Image from 'next/image';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import Rellax from 'rellax';
 import Details from '../(components)/Details';
 
 export default function Description() {
@@ -36,15 +35,14 @@ export default function Description() {
         name: chopper.name,
         image: chopper.image,
       });
-      let rellax = new Rellax('.parallax-element');
     });
   }, [slug]);
 
   return (
     <main className="description-main">
       <section className="intro relative">
-        <div className="absolute inset-0 bg-black opacity-70 z-10"></div>
-        <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-10 text-center px-4">
+        <div className="absolute inset-0 bg-black opacity-50 z-10"></div>
+        <div className="absolute top-12 left-1/2 transform -translate-x-1/2 z-10 text-center px-4">
           <h1 className="">
             {chopperInfo.name} <br />
             DESCRIPTION
@@ -53,7 +51,7 @@ export default function Description() {
 
         <div className="bg-img mountain-img relative h-64 sm:h-80 md:h-96 lg:h-[32rem] ">
           <Image
-            src="/images/description/Altitude1.jpg"
+            src="/images/banner/IMG_2036.JPG"
             alt="mountain background"
             fill
             className="object-cover"

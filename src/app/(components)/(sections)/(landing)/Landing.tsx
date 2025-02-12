@@ -42,12 +42,6 @@ function Landing() {
           our remarkable team.
         </p>
         <div className="flex flex-col justify-center w-full">
-          <h3 className="text-2xl font-black  text-gray-200">Contact us at:</h3>
-          <a href={`tel:${hotline}`} className=" ">
-            <h2 className="text-lg w-48 font-black text-custom-primary">
-              {hotline}
-            </h2>
-          </a>
           <div className=" mt-2">
             <Dialog>
               <DialogTrigger asChild>
@@ -58,6 +52,14 @@ function Landing() {
               </DialogContent>
             </Dialog>
           </div>
+          <h3 className="text-xl font-black pt-1  text-gray-200">
+            Contact us at:
+          </h3>
+          <a href={`tel:${hotline}`} className=" ">
+            <h2 className="text-lg w-48 font-black text-custom-primary">
+              {hotline}
+            </h2>
+          </a>
         </div>
       </div>
     </section>
