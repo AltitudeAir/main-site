@@ -23,8 +23,10 @@ export default function GetInTouch() {
     setShowModal(false);
   };
 
+  const hotlineNumbers = hotline.split('\n').join(',');
+
   return (
-    <section className="get_in_touch !py-10">
+    <section className="get_in_touch !py-10 !px-9">
       <div className="touch_container">
         <div className="touch_heading_container">
           <h2>Get in touch with us?</h2>
@@ -32,8 +34,8 @@ export default function GetInTouch() {
 
         <div className="enquiry_container">
           <div className="contact_container">
-            <a href={`tel:${hotline}`}>
-              <h2>{hotline}</h2>
+            <a className="w-10" href={`tel:${hotline}`}>
+              <h2>{hotlineNumbers}</h2>
             </a>
           </div>
           <div className="button_container">

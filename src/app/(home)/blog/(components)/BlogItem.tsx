@@ -1,5 +1,4 @@
 'use client';
-import { constants } from '@/core/utils/constants';
 import { dateFromSqlDateTime, parseHtml } from '@/core/utils/helper';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -29,7 +28,7 @@ export default function BlogItem({
       <div className="image_container">
         <div className="absolute_shadow relative " />
         <Image
-          src={constants.baseUrl + coverImage}
+          src={coverImage as string}
           alt="blog heli image"
           //   onError={(e) => {
           //     e.currentTarget.src = '/images/errors/placeholder.webp';

@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 'use client';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -13,10 +12,11 @@ const Navbar = () => {
 
   const handleScroll = () => {
     const currentScrollY = window.scrollY;
-
     if (currentScrollY > lastScrollY) {
       setIsNavbarVisible(false);
-      setIsStickyLogoVisible(true);
+      if (currentScrollY > 100) {
+        setIsStickyLogoVisible(true);
+      }
     } else {
       setIsNavbarVisible(true);
       setIsStickyLogoVisible(false);
@@ -35,7 +35,7 @@ const Navbar = () => {
   return (
     <>
       <div
-        className={`fixed top-0 left-0 h-16 w-full z-50 bg-white/60 backdrop-blur-md transition-transform duration-300 ${
+        className={`fixed top-0 left-0 h-16 w-full z-50 bg-white/60 backdrop-blur-md transition-transform duration-500 ease-in-out ${
           isNavbarVisible ? 'translate-y-0' : '-translate-y-full'
         }`}
       >
@@ -60,10 +60,10 @@ const Navbar = () => {
         </div>
       </div>
       {isStickyLogoVisible && (
-        <div className="fixed top-0 sm:left-0 w-full left-2 z-40">
-          <div className="lg:container mx-auto ">
+        <div className="fixed top-0 sm:left-2 w-full left-2 z-40 transition-transform duration-500 ease-in-out">
+          <div className="lg:container mx-auto">
             <div className="bg-white w-24 flex justify-center">
-              <Link href="/" className="flex items-center relatives h-16 w-16">
+              <Link href="/" className="flex items-center relative h-16 w-16">
                 <Image
                   alt="altitude-air-logo"
                   src="/images/inverse-logo.webp"

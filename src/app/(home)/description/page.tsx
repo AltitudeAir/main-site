@@ -1,27 +1,28 @@
-import { Metadata } from 'next';
+'use client';
 import Image from 'next/image';
+import Link from 'next/link'; // Import Link
+import { useEffect, useState } from 'react';
 
-export const metadata: Metadata = {
-  title: 'Fleets',
-  description: 'Fleets page',
-  openGraph: {
-    title: 'Fleets ',
-    description: 'Fleets page',
-    url: 'https://altitudeairnepal.com',
-    images: [
-      {
-        url: 'https://altitudeairnepal.com/images/description/down.webp',
-        width: 1200,
-        height: 630,
-        alt: 'Fleets ',
-      },
-    ],
-    locale: 'en_US',
-    type: 'website',
-  },
-};
+interface ChoppersType {
+  id: number;
+  name: string;
+}
 
-const page = () => {
+const Page = () => {
+  const [choppers, setChoppers] = useState<ChoppersType[]>([]);
+  useEffect(() => {
+    const fetchChoppers = async () => {
+      const data: ChoppersType[] = [
+        { id: 1, name: '9N-AMS' },
+        { id: 2, name: '9N-AMX' },
+      ];
+      setChoppers(data);
+      console.log('Fetched choppers:', data);
+    };
+
+    fetchChoppers();
+  }, []);
+
   return (
     <main className="description-main">
       <section className="intro relative flex flex-col lg:flex-row">
@@ -31,7 +32,10 @@ const page = () => {
           </h1>
         </div>
         <div className="flex flex-col lg:flex-row w-full h-full">
-          <div className="flex-1 relative cursor-pointer w-full h-[250px] md:h-[400px] lg:h-full group">
+          <Link
+            href={`/description/${choppers?.[0]?.id}`}
+            className="flex-1 relative cursor-pointer w-full h-[250px] md:h-[400px] lg:h-full group"
+          >
             <div className="absolute inset-0 bg-black opacity-70 z-10 group-hover:opacity-0 transition-opacity duration-300"></div>
             <Image
               src="/images/description/Altitude1.jpg"
@@ -42,23 +46,26 @@ const page = () => {
             <div className="absolute inset-0 flex items-center justify-center z-30 group-hover:hidden transition-all duration-300">
               <span className="text-white text-2xl font-semibold">9N-AMS</span>
             </div>
-          </div>
-          <div className="flex-1 relative cursor-pointer w-full h-[250px] md:h-[400px] lg:h-full group">
-            <div className="absolute inset-0 bg-black opacity-70 z-10 group-hover:opacity-0 transition-opacity duration-300"></div>
+          </Link>
+          <Link
+            href={`/description/${choppers?.[1]?.id}`}
+            className="flex-1 relative cursor-pointer w-full h-[250px] md:h-[400px] lg:h-full group"
+          >
+            <div className="absolute inset-0 bg-black opacity-80 z-10 group-hover:opacity-0 transition-opacity duration-300"></div>
             <Image
-              src="/images/banner/banner-4.jpg"
+              src="/images/banner/Sheyphoksundo.jpg"
               alt="another background"
               fill
               className="object-cover"
             />
             <div className="absolute inset-0 flex items-center justify-center z-30 group-hover:hidden transition-all duration-300">
-              <span className="text-white text-2xl font-semibold">9N-ANX</span>
+              <span className="text-white text-2xl font-semibold">9N-AMX</span>
             </div>
-          </div>
+          </Link>
         </div>
       </section>
     </main>
   );
 };
 
-export default page;
+export default Page;

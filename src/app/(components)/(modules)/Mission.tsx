@@ -7,25 +7,25 @@ const Mission = () => {
   const moveRightPercent = 1;
 
   const circleImages = [
-    '/images/heliski.png',
+    '/images/Helsik.png',
     '/images/chasing.png',
     '/images/charter.png',
     '/images/fliming.png',
     '/images/prilimage.png',
-    '/images/moutain.png',
+    '/images/mountain.png',
     '/images/Allogo.png',
     '/images/rescue.png',
   ];
 
   const imageSizes = [
-    { width: 6, height: 6 },
+    { width: 6.2, height: 6.2 },
     { width: 6, height: 6 },
     { width: 6.5, height: 6.5 },
-    { width: 6.5, height: 6.5 },
+    { width: 6, height: 6 },
     { width: 5.5, height: 5.5 },
-    { width: 4.5, height: 4.5 },
-    { width: 10, height: 10 },
-    { width: 7, height: 7 },
+    { width: 5, height: 5 },
+    { width: 11, height: 6 },
+    { width: 7, height: 6 },
   ];
 
   const texts = [
@@ -50,7 +50,7 @@ const Mission = () => {
       return (
         <div
           key={i}
-          className="absolute rounded-full overflow-hidden"
+          className="absolute rounded-full overflow-hidden "
           style={{
             width: `${imageSizes[i].width}vw`,
             height: `${imageSizes[i].height}vw`,
@@ -132,7 +132,7 @@ const Mission = () => {
     let marginStyle = {
       left: `${x}%`,
       top: `${y}%`,
-      transform: 'translate(98%, -60%)',
+      transform: 'translate(98%, -50%)',
       width: '10%',
       marginTop: '0',
       marginLeft: '0',
@@ -158,23 +158,19 @@ const Mission = () => {
     return (
       <div
         key={index}
-        className="absolute text-center"
+        className="absolute text-center transition-transform duration-300 cursor-pointer hover:scale-110"
         style={{
           left: marginStyle.left,
           top: marginStyle.top,
           transform: marginStyle.transform,
           width: marginStyle.width,
-          marginTop: marginStyle.marginTop,
-          marginLeft: marginStyle.marginLeft,
-          marginRight: marginStyle.marginRight,
-          marginBottom: marginStyle.marginBottom,
           fontFamily: 'Gilroy-ExtraBold',
           fontWeight: '800',
         }}
       >
         {percentageMatch && (
           <p
-            className=" text-yellow-400"
+            className="text-yellow-400 transition-transform duration-300 hover:scale-110"
             style={{
               fontSize: 'clamp(0.2rem, 2vw, 5rem)',
               marginBottom: '0.2rem',
@@ -185,10 +181,10 @@ const Mission = () => {
         )}
         {description && (
           <p
-            className="text-gray-600"
+            className="text-gray-600 transition-transform duration-300 hover:scale-110"
             style={{
               fontSize: 'clamp(-16rem, 0.9vw, 0.8rem)',
-              marginTop: '-0.5rem',
+              marginTop: '-0.3rem',
               marginBottom: '0.2rem',
             }}
           >
@@ -202,7 +198,7 @@ const Mission = () => {
   return (
     <div
       className="relative"
-      style={{ left: '30%', top: '45%', transform: 'translate(-50%, -50%)' }}
+      style={{ left: '30%', top: '45%', transform: 'translate(7%, 5%)' }}
     >
       <div
         className="relative w-[50vw] sm:w-[40vw] md:w-[30vw] lg:w-[25vw] h-[50vw] sm:h-[40vw] md:h-[30vw] lg:h-[25vw] bg-white rounded-full"
@@ -258,19 +254,19 @@ const Mission = () => {
               <div
                 className="absolute"
                 style={{
-                  left: '65%',
-                  top: '75%',
+                  left: '50%',
+                  top: '55%',
                   transform: 'translate(-50%, -50%)',
-                  width: '10vw',
-                  height: '10vw',
+                  width: '8vw',
+                  height: 'auto',
                 }}
               >
                 <Image
                   src="/images/helecopter.png"
                   alt="Helicopter"
-                  layout="intrinsic"
-                  width={70}
-                  height={70}
+                  width={95}
+                  height={80}
+                  className="w-full h-auto"
                 />
               </div>
             </div>

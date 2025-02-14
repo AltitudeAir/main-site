@@ -1,7 +1,12 @@
 'use client';
 
+import { useAppDispatch, useAppSelector } from '@/core/redux/clientStore';
+import { RootState } from '@/core/redux/store';
+import { PaginatedResponseType } from '@/core/types/responseTypes';
 import { classNames } from '@/core/ui/components/CalendarPicker';
 import axiosInstance from '@/core/utils/axoisInst';
+import blogApi from '@/modules/blog/blogApi';
+import { BlogCategoryType } from '@/modules/blog/blogType';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -19,23 +24,24 @@ interface ChoppersType {
 }
 
 export default function SideDrawer({ show }: { show: boolean }) {
+  const dispatch = useAppDispatch();
   const currentPath = usePathname();
   const toggleOpen = 'left-0';
   const toggleClose = '-left-60';
-  const [blogCategories, setBlogCategories] = useState<
-    BlogCategoriesType[] | undefined
-  >([]);
+
   const [choppers, setChoppers] = useState<ChoppersType[] | undefined>();
 
   const menuItems = ItemsData;
   useEffect(() => {
-    axiosInstance.get('/category/').then((item) => {
-      let newArray = item.data.data.filter((item: any) => {
-        return item.status === true;
-      });
-      setBlogCategories(newArray);
-    });
+    dispatch(blogApi.endpoints.getAllBlogCategory.initiate(1));
+  }, [dispatch]);
 
+  const blogCategories = useAppSelector(
+    (state: RootState) =>
+      state.baseApi.queries['getAllBlogCategory(1)']
+        ?.data as PaginatedResponseType<BlogCategoryType>
+  );
+  useEffect(() => {
     axiosInstance.get('/chopper/').then((item) => {
       const chopperList = item.data.data;
       setChoppers(chopperList);
@@ -145,19 +151,19 @@ export default function SideDrawer({ show }: { show: boolean }) {
               </Link>
             </li>
             {blogsDropActive ? (
-              blogCategories?.map((item) => {
+              blogCategories?.results.map((item, index) => {
                 return (
                   <li
-                    key={item.name}
+                    key={index}
                     className={classNames(
                       `relative z-10 hover:bg-gray-500 hover:text-white`,
-                      currentPath === `/blog?category=${item.slug}`
+                      currentPath === `/blog?category=${item.id}`
                         ? 'bg-custom-blue/95 text-white hover:bg-none'
                         : ''
                     )}
                   >
                     <Link
-                      href={`/blog?category=${item.slug}`}
+                      href={`/blog?category=${item.id}`}
                       className="flex items-center h-14 px-4"
                     >
                       {item.name}

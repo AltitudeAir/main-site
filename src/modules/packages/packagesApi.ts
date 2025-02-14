@@ -8,7 +8,7 @@ const packagesApi = baseApi
     .injectEndpoints({
         endpoints: (builder) => ({
             getAllPackages: builder.query<PaginatedResponseType<PackagesDataType>, void>({
-                query: () => `${apiPaths.allPackagesPublicUrl}`,
+                query: () => `${apiPaths.getPackages}`,
                 providesTags: (response: any) =>
                     response
                         ? [
@@ -27,26 +27,25 @@ const packagesApi = baseApi
                     return response as PaginatedResponseType<PackagesDataType>;
                 },
             }),
-            // getPackagesLimit: builder.query<PackagesDataType[], number>({
-            //     query: () => `${apiPaths.allPackagesUrl}`,
-            //     providesTags: (response: any) =>
-            //         response
-            //             ? [
-            //                 ...response?.data?.map(({ id }: { id: number }) => ({ type: 'Packages', id } as const)) ?? [],
-            //                 { type: 'Packages', id: 'LIST' },
-            //             ]
-            //             : [{ type: 'Packages', id: 'LIST' }],
-            //     serializeQueryArgs: ({ endpointName }) => {
-            //         return endpointName;
-            //     },
-            //     forceRefetch({ currentArg, previousArg }) {
-            //         return currentArg !== previousArg;
-            //     },
-            //     transformResponse: (response: any) => {
-            //         // console.log(response);
-            //         return response as PackagesDataType[];
-            //     },
-            // }),
+
+            //get Each
+            getEachPackage: builder.query<PackagesDataType, string>({
+                query: (packageSlug) => `${apiPaths.getPackages}${packageSlug}/`,
+                providesTags: (result, error, packageSlug) => {
+                    return [{ type: 'Packages', packageSlug }];
+                },
+                serializeQueryArgs: ({ queryArgs, endpointName }) => {
+                    return `${endpointName}("${queryArgs}")`;
+                },
+                async onQueryStarted(payload, { queryFulfilled }) {
+                    try {
+                        await queryFulfilled;
+                    } catch (err) {
+                        console.log(err);
+                    }
+                },
+            }),
+
             getPackage: builder.query<PackagesDataType, string>({
                 query: (arg) => `${apiPaths.getPackages}${arg}/`,
                 providesTags: (response: any) =>

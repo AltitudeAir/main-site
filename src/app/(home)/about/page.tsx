@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react';
 import Mission from '@/app/(components)/(modules)/Mission';
 import { useAppDispatch, useAppSelector } from '@/core/redux/hooks';
 import { RootState } from '@/core/redux/store';
-import { PaginatedResponseType } from '@/core/types/responseTypes';
 import axiosInst from '@/core/utils/axoisInst';
 import { constants } from '@/core/utils/constants';
 import { parseHtml } from '@/core/utils/helper';
@@ -61,28 +60,15 @@ export default function About() {
   });
 
   useEffect(() => {
-    dispatch(crewApi.endpoints.getAllCrew.initiate(1));
+    dispatch(crewApi.endpoints.getAllCrew.initiate());
   }, [dispatch]);
 
   const crewData = useAppSelector(
     (state: RootState) =>
-      state.baseApi.queries['getAllCrew(1)']
-        ?.data as PaginatedResponseType<CrewsType>
+      crewApi.endpoints.getAllCrew.select()(state)?.data || []
   );
 
   useEffect(() => {
-    // new Rellax('.parallax-element');
-
-    axiosInst
-      .get('/crew/')
-      .then((result) => {
-        const data = result.data.data;
-        setCrews(data);
-      })
-      .catch((err) => {
-        console.log(err.response);
-      });
-
     axiosInst
       .get('/BOD/')
       .then((result) => {
@@ -218,7 +204,7 @@ export default function About() {
 
           <div className="card_container">
             {crewData &&
-              crewData.results.map((member, index) => {
+              crewData?.map((member, index) => {
                 if (member.team === 'crew') {
                   return (
                     <div className="crew_card" key={index}>
@@ -242,7 +228,7 @@ export default function About() {
                           </h2>
                           <p className="type">
                             <strong>
-                              Captain{member.type?.title?.toUpperCase()}
+                              {member.type?.title?.toUpperCase()}Captain
                             </strong>
                             <br />
                           </p>
@@ -280,7 +266,7 @@ export default function About() {
           </div>
 
           <div className="card_container">
-            {crewData?.results.map((member, index) => {
+            {crewData?.map((member, index) => {
               if (member.team === 'management') {
                 return (
                   <div className="crew_card" key={index}>
@@ -328,7 +314,7 @@ export default function About() {
           </div>
 
           <div className="card_container">
-            {crewData?.results.map((member, index) => {
+            {crewData?.map((member, index) => {
               if (member.team === 'technical') {
                 return (
                   <div className="crew_card" key={index}>
@@ -376,7 +362,7 @@ export default function About() {
           </div>
 
           <div className="card_container">
-            {crewData?.results.map((member, index) => {
+            {crewData?.map((member, index) => {
               if (member.team === 'quality') {
                 return (
                   <div className="crew_card" key={index}>
@@ -424,7 +410,7 @@ export default function About() {
           </div>
 
           <div className="card_container">
-            {crewData?.results.map((member, index) => {
+            {crewData?.map((member, index) => {
               if (member.team === 'safety') {
                 return (
                   <div className="crew_card" key={index}>
@@ -582,11 +568,11 @@ export default function About() {
           </div>
         </div>
       </section>
-      <section className="infographic-section" id="statistics">
-        <div className="h2_wrapper">
-          <h2>MISSION&nbsp;STATISTICS</h2>
+      <section className="h-auto w-full pb-12" id="statistics">
+        <div className="mt-12 text-center font-bankGothic">
+          <h2 className="h2_wrapper">MISSION&nbsp;STATISTICS</h2>
         </div>
-        <div className="circle-background relative mx-auto">
+        <div className="w-1/2 aspect-w-1 aspect-h-1 flex justify-center items-center  relative">
           <Mission />
         </div>
       </section>
