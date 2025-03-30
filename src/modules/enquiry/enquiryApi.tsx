@@ -43,7 +43,6 @@ const enquiryApi = baseApi
           }
         },
         transformResponse: (response: any) => {
-          console.log(response);
           return response as any;
         },
       }),

@@ -921,7 +921,6 @@ function PersonalInfo({
       });
       // notificationContext.showNotification('Form Submitted.', 2000, 'Success');
     } catch (error: any) {
-      console.log(error.response);
       // notificationContext.showNotification('Error submitting form.', 2000);
       setFormSubmitted(false);
       return;

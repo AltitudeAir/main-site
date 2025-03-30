@@ -6,6 +6,7 @@ import { PackagesDataType } from '@/modules/packages/packagesType';
 import { useEffect, useState } from 'react';
 import { FaLocationDot } from 'react-icons/fa6';
 import { IoTimeOutline } from 'react-icons/io5';
+import BookingCard from '../(components)/BookingCard';
 import axiosInst from '../../../../../core/utils/axoisInst';
 import BookingMainCard from '../../[slug]/(components)/BookingMainCard';
 import PackageAdditionalInfo from '../../[slug]/(components)/PackageAdditionalInfo';
@@ -19,6 +20,11 @@ const PackageLinkPage = ({ params }: { params: { slug: string } }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [hotline, setHotline] = useState('');
+  const [departureDate, setDepartureDate] = useState<Date>(new Date());
+  const [selectedOption, setSelectedOption] = useState({
+    value: '1',
+    label: '1 traveler',
+  });
 
   useEffect(() => {
     axiosInst.get('/footer/').then((result) => {
@@ -78,7 +84,7 @@ const PackageLinkPage = ({ params }: { params: { slug: string } }) => {
         <div className="container mx-auto">
           <div className="grid grid-cols-12 place-content-start gap-x-10 gap-y-10 px-6 md:px-0">
             <div className="col-span-12 md:col-span-8 w-full">
-              <PackageAdditionalInfo />
+              <PackageAdditionalInfo packageItem={packageData} />
               <PackageGallery packageSlug={packageData.slug} />
               <PackageHighlights
                 data={packageData.description}
@@ -86,8 +92,15 @@ const PackageLinkPage = ({ params }: { params: { slug: string } }) => {
               />
             </div>
             <div className="col-span-12 md:col-span-4 w-full">
-              <PackageLocation />
-              {/* <BookingCard /> */}
+              {packageData.latitude && packageData.longitude ? (
+                <PackageLocation
+                  latitude={parseFloat(packageData.latitude)}
+                  longtitude={parseFloat(packageData.longitude)}
+                />
+              ) : (
+                <></>
+              )}
+              <BookingCard />
             </div>
           </div>
         </div>

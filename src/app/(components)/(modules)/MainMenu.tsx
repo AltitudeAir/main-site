@@ -1,5 +1,12 @@
 'use client';
+import { aboutSubheadings } from '@/core/constants/appConstants';
+import { useAppDispatch } from '@/core/redux/clientStore';
+import { useAppSelector } from '@/core/redux/hooks';
+import { RootState } from '@/core/redux/store';
+import { PaginatedResponseType } from '@/core/types/responseTypes';
 import axiosInstance from '@/core/utils/axoisInst';
+import blogApi from '@/modules/blog/blogApi';
+import { BlogType } from '@/modules/servicess/servicessType';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -82,11 +89,6 @@ export const ItemsData = [
   },
 ];
 
-interface BlogCategoriesType {
-  slug: string;
-  name: string;
-}
-
 interface ChoppersType {
   id: number;
   name: string;
@@ -94,9 +96,8 @@ interface ChoppersType {
 
 const MainMenu = () => {
   const currentPath = usePathname();
-  const [blogCategories, setBlogCategories] = useState<
-    BlogCategoriesType[] | undefined
-  >([]);
+  const dispatch = useAppDispatch();
+
   const [choppers, setChoppers] = useState<ChoppersType[] | undefined>();
 
   const [navItems, setNavItems] = useState([
@@ -113,15 +114,16 @@ const MainMenu = () => {
       link: '/contact',
     },
   ]);
-
   useEffect(() => {
-    axiosInstance.get('/category/').then((item) => {
-      let newArray = item.data.data.filter((item: any) => {
-        return item.status === true;
-      });
-      setBlogCategories(newArray);
-    });
+    dispatch(blogApi.endpoints.getAllBlog.initiate(1));
+  }, [dispatch]);
 
+  const blogCategories = useAppSelector(
+    (state: RootState) =>
+      state.baseApi.queries['getAllBlog(1)']
+        ?.data as PaginatedResponseType<BlogType>
+  );
+  useEffect(() => {
     axiosInstance.get('/chopper/').then((item) => {
       const chopperList = item.data.data;
       setChoppers(chopperList);
@@ -144,32 +146,7 @@ const MainMenu = () => {
             </Link>
             <div className="hidden group-hover:block group-hover:shadow absolute top-full -left-[6px] min-w-full w-max bg-custom-blue/90">
               <ul className="flex flex-col justify-end h-full uppercase text-xs font-semibold text-white">
-                {[
-                  {
-                    title: 'Overview',
-                    link: '/about#overview',
-                  },
-                  {
-                    title: 'Message From Executive Chairman',
-                    link: '/about#message',
-                  },
-                  {
-                    title: 'Board Of Directors',
-                    link: '/about#board_info',
-                  },
-                  {
-                    title: 'Crew',
-                    link: '/about#crew',
-                  },
-                  {
-                    title: 'Mission & Vision',
-                    link: '/about#mission&vision',
-                  },
-                  {
-                    title: 'Mission Statistics',
-                    link: '/about#statistics',
-                  },
-                ].map((subItem, subIndex) => (
+                {aboutSubheadings.map((subItem, subIndex) => (
                   <li
                     key={subIndex}
                     className="relative hover:bg-custom-primary/30 before:absolute before:top-0 before:left-0 hover:before:bottom-0 hover:before:w-2 before:bg-custom-primary"
@@ -186,6 +163,15 @@ const MainMenu = () => {
             </div>
           </li>
         </MenuItems>
+        <MenuItems>
+          <li
+            className={`relative px-5 group ${navHoverClass} ${currentPath === '/packages' ? navActiveClass : ''}`} // add active class letter
+          >
+            <Link href={'/packages'} className="flex items-center h-full">
+              PACKAGES
+            </Link>
+          </li>
+        </MenuItems>
 
         <MenuItems>
           <li
@@ -197,16 +183,16 @@ const MainMenu = () => {
             <div className="hidden group-hover:block group-hover:shadow absolute top-full -left-[6px] min-w-full w-max bg-custom-blue/90">
               <ul className="flex flex-col justify-end h-full uppercase text-xs font-semibold text-white">
                 {blogCategories &&
-                  blogCategories.map((subItem, subIndex) => (
+                  blogCategories?.results?.map((subItem, index) => (
                     <li
-                      key={subIndex}
+                      key={index}
                       className="relative hover:bg-custom-primary/30 before:absolute before:top-0 before:left-0 hover:before:bottom-0 hover:before:w-2 before:bg-custom-primary"
                     >
                       <Link
-                        href={`/blog?category=${subItem.slug}`}
+                        href={`/blog/${subItem.id}`}
                         className="flex items-center h-full py-2 px-3"
                       >
-                        {subItem.name}
+                        {subItem.title}
                       </Link>
                     </li>
                   ))}
@@ -242,7 +228,7 @@ const MainMenu = () => {
             </div>
           </li>
         </MenuItems>
-        <MenuItems>
+        {/* <MenuItems>
           <li
             className={`relative px-5 group ${navHoverClass} ${currentPath === '/news' ? navActiveClass : ''}`} // add active class letter
           >
@@ -250,8 +236,8 @@ const MainMenu = () => {
               ARTICLE
             </Link>
           </li>
-        </MenuItems>
-        <MenuItems>
+        </MenuItems> */}
+        {/* <MenuItems>
           <li
             className={`relative px-5 group ${navHoverClass} ${currentPath === '/gallery' ? navActiveClass : ''}`} // add active class letter
           >
@@ -259,7 +245,7 @@ const MainMenu = () => {
               GALLERY
             </Link>
           </li>
-        </MenuItems>
+        </MenuItems> */}
         <MenuItems>
           <li
             className={`relative px-5 group ${navHoverClass} ${currentPath === '/voluntary-hazard-report' ? navActiveClass : ''}`} // add active class letter
@@ -272,16 +258,6 @@ const MainMenu = () => {
             </Link>
           </li>
         </MenuItems>
-
-        {/* <MenuItems>
-          <li
-            className={`relative px-5 group ${navHoverClass} ${currentPath === '/packages' ? navActiveClass : ''}`} // add active class letter
-          >
-            <Link href={'/packages'} className="flex items-center h-full">
-              PACKAGES
-            </Link>
-          </li>
-        </MenuItems> */}
 
         <MenuItems>
           <li

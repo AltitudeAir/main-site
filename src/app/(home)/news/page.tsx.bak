@@ -27,7 +27,6 @@ export default function News() {
     return <div>Error: {error}</div>;
   }
 
-  // console.log(news);
   return (
     <main className="news-main">
       <div className="relative featured-img">

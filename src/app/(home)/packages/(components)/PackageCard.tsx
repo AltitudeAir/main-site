@@ -9,7 +9,7 @@ export default function PackageCard({ item }: { item: PackagesDataType }) {
   const coverImage = item.cover_image ? item.cover_image : defaultImage;
   return (
     <Link
-      href={`packages/${item.slug}`}
+      href={`/packages/${item.slug}`}
       className="relative col-span-12 sm:col-span-6 md:col-span-4 lg:col-span-3 before:absolute before:-top-2 before:-bottom-2 before:-left-2 before:-right-2 before:border-dashed before:border-custom-blue-light/20 before:-z-10 before:hover:border-2 before:hover:bg-custom-bg/60 transition-all duration-200 group"
     >
       <div className="flex flex-col justify-between h-full">
@@ -41,15 +41,17 @@ export default function PackageCard({ item }: { item: PackagesDataType }) {
             {parseHtml(item.description ?? '')}
           </p>
         </div>
-        <div className="flex items-center justify-start gap-5 mt-2">
-          <div className="text-center text-sm font-medium py-2 px-5 text-custom-primary bg-custom-blue hover:bg-custom-blue/90 hover:shadow-md">
+        <div className="flex items-center gap-5 mt-2 justify-between ">
+          <div className="text-center basis-28 text-sm font-medium  py-2 px-5 text-custom-primary bg-custom-blue hover:bg-custom-blue/90 hover:shadow-md">
             Book Now
           </div>
-          <p className="text-custom-blue-light text-sm">
-            Starting from{' '}
-            <span className="text-custom-blue font-medium">${item.price}</span>
-            /p
-          </p>
+          <div className="text-custom-blue-light text-sm flex flex-col items-end">
+            <p className="text-sm">Starting from </p>
+            <p className="text-custom-blue font-medium text-base">
+              ${item.price}
+              {item.pricing_type === 'fixed' ? '' : '/p'}
+            </p>
+          </div>
         </div>
       </div>
     </Link>

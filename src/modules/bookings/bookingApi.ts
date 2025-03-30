@@ -37,7 +37,6 @@ const bookingApi = baseApi
                     }
                 },
                 transformResponse: (response: BookingDetailType) => {
-                    console.log(response);
                     return response as BookingDetailType;
                 },
             }),

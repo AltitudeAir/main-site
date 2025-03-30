@@ -1,12 +1,19 @@
 'use client';
 
+import { aboutSubheadings } from '@/core/constants/appConstants';
+import { useAppDispatch, useAppSelector } from '@/core/redux/clientStore';
+import { RootState } from '@/core/redux/store';
+import { PaginatedResponseType } from '@/core/types/responseTypes';
 import { classNames } from '@/core/ui/components/CalendarPicker';
 import axiosInstance from '@/core/utils/axoisInst';
+import blogApi from '@/modules/blog/blogApi';
+import { BlogCategoryType } from '@/modules/blog/blogType';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { ItemsData } from '../(modules)/MainMenu';
+import SibeBarSubheadings from './SideBarSubheadings';
 
 interface BlogCategoriesType {
   slug: string;
@@ -18,33 +25,56 @@ interface ChoppersType {
   name: string;
 }
 
-export default function SideDrawer({ show }: { show: boolean }) {
+export default function SideDrawer({
+  show,
+  setDrawer,
+}: {
+  show: boolean;
+  setDrawer: Dispatch<SetStateAction<boolean>>;
+}) {
+  const dispatch = useAppDispatch();
   const currentPath = usePathname();
   const toggleOpen = 'left-0';
   const toggleClose = '-left-60';
-  const [blogCategories, setBlogCategories] = useState<
-    BlogCategoriesType[] | undefined
-  >([]);
+
   const [choppers, setChoppers] = useState<ChoppersType[] | undefined>();
 
   const menuItems = ItemsData;
   useEffect(() => {
-    axiosInstance.get('/category/').then((item) => {
-      let newArray = item.data.data.filter((item: any) => {
-        return item.status === true;
-      });
-      setBlogCategories(newArray);
-    });
+    dispatch(blogApi.endpoints.getAllBlogCategory.initiate(1));
+  }, [dispatch]);
 
+  const blogCategories = useAppSelector(
+    (state: RootState) =>
+      state.baseApi.queries['getAllBlogCategory(1)']
+        ?.data as PaginatedResponseType<BlogCategoryType>
+  );
+  useEffect(() => {
     axiosInstance.get('/chopper/').then((item) => {
       const chopperList = item.data.data;
       setChoppers(chopperList);
     });
   }, []);
 
-  const [blogsDropActive, setBlogsDrop] = useState(false);
-  const [aboutDropActive, setAboutDrop] = useState(false);
-  const [fleetsDropActive, setFleetsDrop] = useState(false);
+  const getCurrentTab = (currentPath: string) => {
+    if (currentPath.includes('blog')) {
+      return 'blog';
+    }
+    if (currentPath.includes('about')) {
+      return 'about';
+    }
+    if (currentPath.includes('description')) {
+      return 'description';
+    }
+    return undefined;
+  };
+
+  // const [blogsDropActive, setBlogsDrop] = useState(false);
+  // const [aboutDropActive, setAboutDrop] = useState(false);
+  // const [fleetsDropActive, setFleetsDrop] = useState(false);
+  const [activeTab, setActiveTab] = useState<
+    'blog' | 'about' | 'description' | undefined
+  >(getCurrentTab(currentPath));
 
   return (
     <>
@@ -76,113 +106,23 @@ export default function SideDrawer({ show }: { show: boolean }) {
                   ? 'bg-custom-blue/85 text-white'
                   : ''
               )}
-              onClick={() => setAboutDrop(!aboutDropActive)}
+              onClick={() => {
+                setDrawer(false);
+              }}
             >
               <Link href={'/about'} className="flex items-center px-4 h-16">
                 ABOUT
               </Link>
             </li>
-            {aboutDropActive ? (
-              [
-                {
-                  title: 'Overview',
-                  link: '/about#overview',
-                },
-                {
-                  title: 'Message From Executive Chairman',
-                  link: '/about#message',
-                },
-                {
-                  title: 'Board Of Directors',
-                  link: '/about#board_info',
-                },
-                {
-                  title: 'Crew',
-                  link: '/about#crew',
-                },
-                {
-                  title: 'Mission & Vision',
-                  link: '/about#mission&vision',
-                },
-                {
-                  title: 'Mission Statistics',
-                  link: '/about#statistics',
-                },
-              ].map((item) => {
-                return (
-                  <li
-                    key={item.title}
-                    className={classNames(
-                      `relative z-10 hover:bg-gray-500 hover:text-white`,
-                      currentPath.startsWith(item.link)
-                        ? 'bg-custom-blue/95 text-white hover:bg-none'
-                        : ''
-                    )}
-                  >
-                    <Link
-                      href={item.link}
-                      className="flex items-center h-14 px-4"
-                    >
-                      {item.title}
-                    </Link>
-                  </li>
-                );
-              })
-            ) : (
-              <></>
-            )}
-            <li
-              className={classNames(
-                `relative z-10 hover:bg-gray-500 hover:text-white`,
-                currentPath.startsWith('/blog')
-                  ? 'bg-custom-blue/85 text-white hover:bg-none'
-                  : ''
-              )}
-              onClick={() => setBlogsDrop(!blogsDropActive)}
-            >
-              <Link href={'/blog'} className="flex items-center px-4 h-16">
-                Our Services
-              </Link>
-            </li>
-            {blogsDropActive ? (
-              blogCategories?.map((item) => {
-                return (
-                  <li
-                    key={item.name}
-                    className={classNames(
-                      `relative z-10 hover:bg-gray-500 hover:text-white`,
-                      currentPath === `/blog?category=${item.slug}`
-                        ? 'bg-custom-blue/95 text-white hover:bg-none'
-                        : ''
-                    )}
-                  >
-                    <Link
-                      href={`/blog?category=${item.slug}`}
-                      className="flex items-center h-14 px-4"
-                    >
-                      {item.name}
-                    </Link>
-                  </li>
-                );
-              })
-            ) : (
-              <></>
-            )}
-            <li
-              className={classNames(
-                `relative z-10 hover:bg-gray-500 hover:text-white`,
-                currentPath === '/voluntary-hazard-report'
-                  ? 'bg-custom-blue/85 text-white hover:bg-none'
-                  : ''
-              )}
-            >
-              <Link
-                href={'/voluntary-hazard-report'}
-                className="flex items-center px-4 h-16"
-              >
-                VOLUNTARY HAZARD
-              </Link>
-            </li>
+            <SibeBarSubheadings
+              setDrawer={setDrawer}
+              subHeadingPath="about"
+              currentPath={currentPath}
+              isActive={currentPath.includes('about')}
+              subHeadings={aboutSubheadings.map((item) => {
+                return { id: item.link, name: item.title };
+              })}
+            />
             <li
               className={classNames(
                 `relative z-10 hover:bg-gray-500 hover:text-white`,
@@ -190,6 +130,9 @@ export default function SideDrawer({ show }: { show: boolean }) {
                   ? 'bg-custom-blue/85 text-white hover:bg-none'
                   : ''
               )}
+              onClick={() => {
+                setDrawer(false);
+              }}
             >
               <Link href={'/packages'} className="flex items-center px-4 h-16">
                 PACKAGES
@@ -198,11 +141,62 @@ export default function SideDrawer({ show }: { show: boolean }) {
             <li
               className={classNames(
                 `relative z-10 hover:bg-gray-500 hover:text-white`,
+                currentPath.startsWith('/blog')
+                  ? 'bg-custom-blue/85 text-white hover:bg-none'
+                  : ''
+              )}
+              onClick={() => {
+                setDrawer(false);
+              }}
+            >
+              <Link href={'/blog'} className="flex items-center px-4 h-16">
+                OUR SERVICES
+              </Link>
+            </li>
+            {blogCategories ? (
+              <SibeBarSubheadings
+                setDrawer={setDrawer}
+                subHeadingPath="blog"
+                currentPath={currentPath}
+                isActive={currentPath.includes('blog')}
+                subHeadings={blogCategories.results.map((item) => {
+                  return { id: `blog#${item.id}`, name: item.name };
+                })}
+              />
+            ) : (
+              <></>
+            )}
+
+            <li
+              className={classNames(
+                `relative z-10 hover:bg-gray-500 hover:text-white`,
+                currentPath === '/voluntary-hazard-report'
+                  ? 'bg-custom-blue/85 text-white hover:bg-none'
+                  : ''
+              )}
+              onClick={() => {
+                setDrawer(false);
+              }}
+            >
+              <Link
+                href={'/voluntary-hazard-report'}
+                className="flex items-center px-4 h-16"
+              >
+                VOLUNTARY HAZARD
+              </Link>
+            </li>
+
+            <li
+              className={classNames(
+                `relative z-10 hover:bg-gray-500 hover:text-white`,
                 currentPath.startsWith('/description')
                   ? 'bg-custom-blue/85 text-white hover:bg-none'
                   : ''
               )}
-              onClick={() => setFleetsDrop(!fleetsDropActive)}
+              onClick={() => {
+                // setActiveTab('description');
+                setDrawer(false);
+              }}
             >
               <Link
                 href={'/description'}
@@ -211,7 +205,20 @@ export default function SideDrawer({ show }: { show: boolean }) {
                 FLEETS
               </Link>
             </li>
-            {fleetsDropActive ? (
+            {choppers ? (
+              <SibeBarSubheadings
+                setDrawer={setDrawer}
+                subHeadingPath="description"
+                currentPath={currentPath}
+                isActive={currentPath.includes('description')}
+                subHeadings={choppers.map((item) => {
+                  return { id: `/description#${item.id}`, name: item.name };
+                })}
+              />
+            ) : (
+              <></>
+            )}
+            {/* {fleetsDropActive ? (
               choppers?.map((item) => {
                 return (
                   <li
@@ -234,31 +241,37 @@ export default function SideDrawer({ show }: { show: boolean }) {
               })
             ) : (
               <></>
-            )}
-            <li
+            )} */}
+            {/* <li
               className={classNames(
                 `relative z-10 hover:bg-gray-500 hover:text-white`,
                 currentPath === '/gallery'
                   ? 'bg-custom-blue/85 text-white hover:bg-none'
                   : ''
               )}
+              onClick={() => {
+                setDrawer(false);
+              }}
             >
               <Link href={'/gallery'} className="flex items-center px-4 h-16">
                 GALLERY
               </Link>
-            </li>
-            <li
+            </li> */}
+            {/* <li
               className={classNames(
                 `relative z-10 hover:bg-gray-500 hover:text-white`,
                 currentPath === '/news'
                   ? 'bg-custom-blue/85 text-white hover:bg-none'
                   : ''
               )}
+              onClick={() => {
+                setDrawer(false);
+              }}
             >
               <Link href={'/news'} className="flex items-center px-4 h-16">
                 NEWS
               </Link>
-            </li>
+            </li> */}
             <li
               className={classNames(
                 `relative z-10 hover:bg-gray-500 hover:text-white`,

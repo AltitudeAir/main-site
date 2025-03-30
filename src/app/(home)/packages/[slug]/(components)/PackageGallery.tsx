@@ -16,9 +16,6 @@ const PackageGallery = ({ packageSlug }: { packageSlug: string }) => {
   );
   const [isEnd, toggleIsEnd] = useState<boolean | undefined>(undefined);
 
-  console.log('isBeginning:', isBeginning);
-  console.log('isEnd:', isEnd);
-
   const dispatch = useAppDispatch();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -65,7 +62,7 @@ const PackageGallery = ({ packageSlug }: { packageSlug: string }) => {
       {!isLoading ? (
         packageGalleryData && packageGalleryData.length > 0 ? (
           <>
-            <h3 className="text-2xl font-bold text-custom-blue mt-5">
+            <h3 className="text-2xl font-bold text-custom-blue sm:px-0 px-3 mt-5">
               Gallery
             </h3>
             <div className="group relative w-full my-5 transition-all duration-100">

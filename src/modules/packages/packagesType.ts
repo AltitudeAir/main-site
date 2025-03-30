@@ -10,9 +10,10 @@ export interface PackagesDataType {
     longitude?: string;
     duration?: string;
     flight_time?: string;
-    price?: number;
+    price?: string;
     min_size?: number;
     max_size?: number;
+    currency?: string;
     pricing_type?: string;
     type?: string;
 }

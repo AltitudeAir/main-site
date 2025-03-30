@@ -6,10 +6,10 @@ export default function Title() {
         <h1>ALTITUDE AIR </h1>
         <div className="p-wrapper">
           <div className="corner-border--open" />
-          <p>
+          <h2>
             We are the first aviators in Nepal to bring an Airbus Helicopter for
             commercial operation.
-          </p>
+          </h2>
           <div className="corner-border--close" />
         </div>
       </div>

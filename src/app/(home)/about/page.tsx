@@ -1,108 +1,28 @@
-'use client';
-import { useEffect, useState } from 'react';
 // import Rellax from 'rellax';
-import Mission from '@/app/(components)/(modules)/Mission';
-import { useAppDispatch, useAppSelector } from '@/core/redux/hooks';
-import { RootState } from '@/core/redux/store';
-import { PaginatedResponseType } from '@/core/types/responseTypes';
-import axiosInst from '@/core/utils/axoisInst';
-import { constants } from '@/core/utils/constants';
+import ImageWithFallback from '@/app/(components)/(elements)/ImageWithFallback';
+import { Chart } from '@/app/(components)/(modules)/PieChart';
+import { fetchData } from '@/core/api/api_client';
+import { apiPaths } from '@/core/api/apiConstants';
+import {
+  ArrayResponseType,
+  PaginatedResponseType,
+} from '@/core/types/responseTypes';
 import { parseHtml } from '@/core/utils/helper';
-import crewApi from '@/modules/crew/crewApi';
-import Image from 'next/image';
+import { BODMessageType, BODsType } from '@/modules/bod/bodType';
+import { CrewsType } from '@/modules/crew/crewType';
 
-interface BODsType {
-  id: number;
-  director?: string;
-  position?: string;
-  image?: string;
-  fname?: string;
-  lname?: string;
-  // Define other properties based on the data structure
-}
+export default async function About() {
+  const { data: bodMessageData, error: bodMessageDataError } = await fetchData<
+    PaginatedResponseType<BODMessageType>
+  >(apiPaths.getBodMessageUrl);
 
-interface BODMessageType {
-  id: number;
-  introduction?: string | undefined;
-  content?: string | undefined;
-  image?: string | undefined;
-}
+  const { data: bodData, error: bodDataError } = await fetchData<
+    PaginatedResponseType<BODsType>
+  >(apiPaths.getBodUrl);
 
-interface CrewsType {
-  id: number;
-  team: string;
-  image?: string;
-  fname?: string;
-  lname?: string;
-  type?: SubType;
-  onType?: string;
-  totalTime?: string;
-  description?: string;
-  // Define other properties based on the data structure
-}
-
-interface SubType {
-  title: string;
-}
-// export const metadata: Metadata = {
-//   title: '...',
-//   description: '...',
-// };
-
-export default function About() {
-  const [BODs, setBODs] = useState<BODsType[]>([]);
-  const dispatch = useAppDispatch();
-  const [crews, setCrews] = useState<CrewsType[]>([]);
-  const [BODMessage, setBODMessage] = useState<BODMessageType>({
-    id: 1,
-    introduction: '',
-    content: '',
-    image: '',
-  });
-
-  useEffect(() => {
-    dispatch(crewApi.endpoints.getAllCrew.initiate(1));
-  }, [dispatch]);
-
-  const crewData = useAppSelector(
-    (state: RootState) =>
-      state.baseApi.queries['getAllCrew(1)']
-        ?.data as PaginatedResponseType<CrewsType>
-  );
-
-  useEffect(() => {
-    // new Rellax('.parallax-element');
-
-    axiosInst
-      .get('/crew/')
-      .then((result) => {
-        const data = result.data.data;
-        setCrews(data);
-      })
-      .catch((err) => {
-        console.log(err.response);
-      });
-
-    axiosInst
-      .get('/BOD/')
-      .then((result) => {
-        const data = result.data.data;
-        setBODs(data);
-      })
-      .catch((err) => {
-        console.log(err.response);
-      });
-
-    axiosInst
-      .get('/BODMessage/')
-      .then((result) => {
-        const data = result.data.data;
-        setBODMessage(data);
-      })
-      .catch((err) => {
-        console.log(err.response);
-      });
-  }, []);
+  const { data: crewData, error: crewDataError } = await fetchData<
+    ArrayResponseType<CrewsType>['data']
+  >(apiPaths.crewallUrl);
 
   const mainClass = {
     backgroundImage: 'url(/images/banner/banner-2.webp)',
@@ -132,9 +52,15 @@ export default function About() {
       <section className="introduction" id="overview">
         <div className="intro_text_wrapper">
           <h2 className="text-2xl font-bold mb-4">INTRODUCTION</h2>
-          <div className="text-custom-text text-base flex flex-col gap-4">
-            {parseHtml(BODMessage?.introduction ?? '')}
-          </div>
+          {!bodMessageDataError &&
+            bodMessageData?.results?.map((item) => (
+              <div
+                key={item.id}
+                className="text-custom-text text-base flex flex-col gap-4"
+              >
+                {parseHtml(item.introduction as string)}
+              </div>
+            ))}
         </div>
       </section>
 
@@ -142,28 +68,27 @@ export default function About() {
         <div className="h2_wrapper">
           <h2>MESSAGE FROM THE EXECUTIVE CHAIRMAN</h2>
         </div>
-        <div className="director_message_wrapper">
-          <div className="image_wrapper relative ">
-            <Image
-              width={100}
-              height={100}
-              //   fill
-              quality={75}
-              className="rounded-md"
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-              onError={(e) => {
-                e.currentTarget.src = '/images/errors/placeholder.webp';
-              }}
-              src={constants.baseUrl + BODMessage?.image}
-              alt="BODs Image"
-            />
-          </div>
-          <div className="text_wrapper text-base flex flex-col gap-2">
-            {parseHtml(BODMessage?.content ?? '')}
-            <span>{BODs[0]?.director}</span>
-            <span>{BODs[0]?.position}</span>
-          </div>
-        </div>
+        {!bodMessageDataError &&
+          bodMessageData?.results?.map((item, index) => (
+            <div key={index} className="director_message_wrapper">
+              <div className="image_wrapper relative ">
+                <ImageWithFallback
+                  width={100}
+                  height={100}
+                  //   fill
+                  quality={75}
+                  className="rounded-md"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                  src={item.image as string}
+                  alt="BODs Image"
+                />
+              </div>
+
+              <div className="text_wrapper text-base flex flex-col gap-2">
+                {parseHtml(item?.content ?? '')}
+              </div>
+            </div>
+          ))}
       </section>
 
       <section className="three_info_section" id="board_info">
@@ -173,35 +98,29 @@ export default function About() {
           </div>
 
           <div className="card_container">
-            {BODs &&
-              BODs.map((member) => {
+            {!bodDataError &&
+              bodData?.results?.map((item) => {
                 return (
-                  <div className="crew_card" key={member.id}>
+                  <div className="crew_card" key={item?.id}>
                     <div className="image_overlay_wrapper relative">
-                      <Image
+                      <ImageWithFallback
                         width={100}
                         height={100}
                         quality={75}
                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                        src={constants.baseUrl + member?.image}
+                        src={item.image as string}
                         alt="Crew Image"
-                        onError={(e) => {
-                          e.currentTarget.src =
-                            '/images/errors/placeholder.webp';
-                        }}
                       />
                       <div className="overlay" />
                       <div className="overlay_container">
                         <h2 className="overlay_name">
-                          {member.fname + ' ' + member.lname}
+                          {item.fname + ' ' + item.lname}
                         </h2>
                         <h3>Board Member</h3>
                       </div>
                     </div>
                     <div className="person_info">
-                      <h2 className="name">
-                        {member.fname + ' ' + member.lname}
-                      </h2>
+                      <h2 className="name">{item.fname + ' ' + item.lname}</h2>
                     </div>
                   </div>
                 );
@@ -217,46 +136,132 @@ export default function About() {
           </div>
 
           <div className="card_container">
-            {crewData &&
-              crewData.results.map((member, index) => {
-                if (member.team === 'crew') {
+            {!crewDataError &&
+              crewData?.map((item, index) => {
+                if (item.team === 'crew') {
                   return (
                     <div className="crew_card" key={index}>
                       <div className="image_overlay_wrapper relative">
-                        <Image
-                          src={member.image as string}
-                          alt={member.fname ?? ''}
+                        <ImageWithFallback
+                          src={item.image as string}
+                          alt={item.fname ?? ''}
                           width={100}
                           height={100}
                           quality={75}
                           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                          onError={(e) => {
-                            e.currentTarget.src =
-                              '/images/errors/placeholder.webp';
-                          }}
                         />
                         <div className="overlay" />
                         <div className="overlay_container">
                           <h2 className="overlay_name">
-                            {member.fname + ' ' + member.lname}
+                            {item.fname + ' ' + item.lname}
                           </h2>
                           <p className="type">
                             <strong>
-                              Captain{member.type?.title?.toUpperCase()}
+                              {item.type?.title?.toUpperCase()}Captain
                             </strong>
                             <br />
                           </p>
                           <h3 className="cap-details">
                             <p>
                               <strong>On Type:</strong>&ensp;
-                              {member.onType?.split(':')[0]} Hr{' '}
-                              {member.onType?.split(':')[1]} Min
+                              {item.onType?.split(':')[0]} Hr{' '}
+                              {item.onType?.split(':')[1]} Min
                               <br />
                               <strong>Air Time:</strong>&ensp;
-                              {member.totalTime?.split(':')[0]} Hr{' '}
-                              {member.totalTime?.split(':')[1]} Min
+                              {item.totalTime?.split(':')[0]} Hr{' '}
+                              {item.totalTime?.split(':')[1]} Min
                             </p>
                           </h3>
+                        </div>
+                      </div>
+                      <div className="person_info">
+                        <h2 className="name">
+                          {item.fname + ' ' + item.lname}
+                        </h2>
+                      </div>
+                    </div>
+                  );
+                }
+                return null;
+              })}
+          </div>
+        </div>
+      </section>
+
+      <section className="three_info_section">
+        <div className="crew_info_wrapper">
+          <div className="h2_wrapper">
+            <h2>MANAGEMENT &nbsp; TEAM</h2>
+          </div>
+
+          <div className="card_container">
+            {!crewDataError &&
+              crewData?.map((item, index) => {
+                if (item.team === 'management') {
+                  return (
+                    <div className="crew_card" key={index}>
+                      <div className="image_overlay_wrapper relative">
+                        <ImageWithFallback
+                          width={100}
+                          height={100}
+                          quality={75}
+                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                          src={item.image as string}
+                          alt="Crew Image"
+                        />
+                        <div className="overlay" />
+                        <div className="overlay_container">
+                          <h2 className="overlay_name">
+                            {item.fname + ' ' + item.lname}
+                          </h2>
+                          <div className="position">
+                            {parseHtml(item.description ?? '')}
+                          </div>
+                        </div>
+                      </div>
+                      <div className="person_info">
+                        <h2 className="name">
+                          {item.fname + ' ' + item.lname}
+                        </h2>
+                      </div>
+                    </div>
+                  );
+                }
+                return null;
+              })}
+          </div>
+        </div>
+      </section>
+
+      <section className="three_info_section bg-dark">
+        <div className="crew_info_wrapper">
+          <div className="h2_wrapper">
+            <h2>TECHNICAL &nbsp; TEAM</h2>
+          </div>
+
+          <div className="card_container">
+            {!crewDataError &&
+              crewData?.map((member, index) => {
+                if (member.team === 'technical') {
+                  return (
+                    <div className="crew_card" key={index}>
+                      <div className="image_overlay_wrapper relative">
+                        <ImageWithFallback
+                          width={100}
+                          height={100}
+                          quality={75}
+                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                          src={member.image as string}
+                          alt="Crew Image"
+                        />
+                        <div className="overlay" />
+                        <div className="overlay_container">
+                          <h2 className="overlay_name">
+                            {member.fname + ' ' + member.lname}
+                          </h2>
+                          <div className="position">
+                            {parseHtml(member.description ?? '')}
+                          </div>
                         </div>
                       </div>
                       <div className="person_info">
@@ -276,143 +281,44 @@ export default function About() {
       <section className="three_info_section">
         <div className="crew_info_wrapper">
           <div className="h2_wrapper">
-            <h2>MANAGEMENT &nbsp; TEAM</h2>
-          </div>
-
-          <div className="card_container">
-            {crewData?.results.map((member, index) => {
-              if (member.team === 'management') {
-                return (
-                  <div className="crew_card" key={index}>
-                    <div className="image_overlay_wrapper relative">
-                      <Image
-                        width={100}
-                        height={100}
-                        quality={75}
-                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                        src={member.image as string}
-                        alt="Crew Image"
-                        onError={(e) => {
-                          e.currentTarget.src =
-                            '/images/errors/placeholder.webp';
-                        }}
-                      />
-                      <div className="overlay" />
-                      <div className="overlay_container">
-                        <h2 className="overlay_name">
-                          {member.fname + ' ' + member.lname}
-                        </h2>
-                        <div className="position">
-                          {parseHtml(member.description ?? '')}
-                        </div>
-                      </div>
-                    </div>
-                    <div className="person_info">
-                      <h2 className="name">
-                        {member.fname + ' ' + member.lname}
-                      </h2>
-                    </div>
-                  </div>
-                );
-              }
-              return null;
-            })}
-          </div>
-        </div>
-      </section>
-
-      <section className="three_info_section bg-dark">
-        <div className="crew_info_wrapper">
-          <div className="h2_wrapper">
-            <h2>TECHNICAL &nbsp; TEAM</h2>
-          </div>
-
-          <div className="card_container">
-            {crewData?.results.map((member, index) => {
-              if (member.team === 'technical') {
-                return (
-                  <div className="crew_card" key={index}>
-                    <div className="image_overlay_wrapper relative">
-                      <Image
-                        width={100}
-                        height={100}
-                        quality={75}
-                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                        src={member.image as string}
-                        alt="Crew Image"
-                        onError={(e) => {
-                          e.currentTarget.src =
-                            '/images/errors/placeholder.webp';
-                        }}
-                      />
-                      <div className="overlay" />
-                      <div className="overlay_container">
-                        <h2 className="overlay_name">
-                          {member.fname + ' ' + member.lname}
-                        </h2>
-                        <div className="position">
-                          {parseHtml(member.description ?? '')}
-                        </div>
-                      </div>
-                    </div>
-                    <div className="person_info">
-                      <h2 className="name">
-                        {member.fname + ' ' + member.lname}
-                      </h2>
-                    </div>
-                  </div>
-                );
-              }
-              return null;
-            })}
-          </div>
-        </div>
-      </section>
-
-      <section className="three_info_section">
-        <div className="crew_info_wrapper">
-          <div className="h2_wrapper">
             <h2>QUALITY &nbsp; TEAM</h2>
           </div>
 
           <div className="card_container">
-            {crewData?.results.map((member, index) => {
-              if (member.team === 'quality') {
-                return (
-                  <div className="crew_card" key={index}>
-                    <div className="image_overlay_wrapper relative">
-                      <Image
-                        width={100}
-                        height={100}
-                        quality={75}
-                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                        src={member.image as string}
-                        alt="Crew Image"
-                        onError={(e) => {
-                          e.currentTarget.src =
-                            '/images/errors/placeholder.webp';
-                        }}
-                      />
-                      <div className="overlay" />
-                      <div className="overlay_container">
-                        <h2 className="overlay_name">
-                          {member.fname + ' ' + member.lname}
-                        </h2>
-                        <div className="position">
-                          {parseHtml(member.description ?? '')}
+            {!crewDataError &&
+              crewData?.map((member, index) => {
+                if (member.team === 'quality') {
+                  return (
+                    <div className="crew_card" key={index}>
+                      <div className="image_overlay_wrapper relative">
+                        <ImageWithFallback
+                          width={100}
+                          height={100}
+                          quality={75}
+                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                          src={member.image as string}
+                          alt="Crew Image"
+                        />
+                        <div className="overlay" />
+                        <div className="overlay_container">
+                          <h2 className="overlay_name">
+                            {member.fname + ' ' + member.lname}
+                          </h2>
+                          <div className="position">
+                            {parseHtml(member.description ?? '')}
+                          </div>
                         </div>
                       </div>
+                      <div className="person_info">
+                        <h2 className="name">
+                          {member.fname + ' ' + member.lname}
+                        </h2>
+                      </div>
                     </div>
-                    <div className="person_info">
-                      <h2 className="name">
-                        {member.fname + ' ' + member.lname}
-                      </h2>
-                    </div>
-                  </div>
-                );
-              }
-              return null;
-            })}
+                  );
+                }
+                return null;
+              })}
           </div>
         </div>
       </section>
@@ -424,43 +330,40 @@ export default function About() {
           </div>
 
           <div className="card_container">
-            {crewData?.results.map((member, index) => {
-              if (member.team === 'safety') {
-                return (
-                  <div className="crew_card" key={index}>
-                    <div className="image_overlay_wrapper relative">
-                      <Image
-                        width={100}
-                        height={100}
-                        quality={75}
-                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                        src={member.image as string}
-                        alt="Crew Image"
-                        onError={(e) => {
-                          e.currentTarget.src =
-                            '/images/errors/placeholder.webp';
-                        }}
-                      />
-                      <div className="overlay" />
-                      <div className="overlay_container">
-                        <h2 className="overlay_name">
-                          {member.fname + ' ' + member.lname}
-                        </h2>
-                        <div className="position">
-                          {parseHtml(member.description ?? '')}
+            {!crewDataError &&
+              crewData?.map((member, index) => {
+                if (member.team === 'safety') {
+                  return (
+                    <div className="crew_card" key={index}>
+                      <div className="image_overlay_wrapper relative">
+                        <ImageWithFallback
+                          width={100}
+                          height={100}
+                          quality={75}
+                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                          src={member.image as string}
+                          alt="Crew Image"
+                        />
+                        <div className="overlay" />
+                        <div className="overlay_container">
+                          <h2 className="overlay_name">
+                            {member.fname + ' ' + member.lname}
+                          </h2>
+                          <div className="position">
+                            {parseHtml(member.description ?? '')}
+                          </div>
                         </div>
                       </div>
+                      <div className="person_info">
+                        <h2 className="name">
+                          {member.fname + ' ' + member.lname}
+                        </h2>
+                      </div>
                     </div>
-                    <div className="person_info">
-                      <h2 className="name">
-                        {member.fname + ' ' + member.lname}
-                      </h2>
-                    </div>
-                  </div>
-                );
-              }
-              return null;
-            })}
+                  );
+                }
+                return null;
+              })}
           </div>
         </div>
       </section>
@@ -475,43 +378,40 @@ export default function About() {
           </div>
 
           <div className="card_container">
-            {crews?.map((member) => {
-              if (member.team === 'mission') {
-                return (
-                  <div className="crew_card" key={member.id}>
-                    <div className="image_overlay_wrapper relative">
-                      <Image
-                        width={100}
-                        height={100}
-                        quality={75}
-                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                        src={constants.baseUrl + member.image}
-                        alt="Crew Image"
-                        onError={(e) => {
-                          e.currentTarget.src =
-                            '/images/errors/placeholder.webp';
-                        }}
-                      />
-                      <div className="overlay" />
-                      <div className="overlay_container">
-                        <h2 className="overlay_name">
-                          {member.fname + ' ' + member.lname}
-                        </h2>
-                        <div className="position">
-                          {parseHtml(member.description ?? '')}
+            {!crewDataError &&
+              crewData?.map((member) => {
+                if (member.team === 'mission') {
+                  return (
+                    <div className="crew_card" key={member.id}>
+                      <div className="image_overlay_wrapper relative">
+                        <ImageWithFallback
+                          width={100}
+                          height={100}
+                          quality={75}
+                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                          src={member.image as string}
+                          alt="Crew Image"
+                        />
+                        <div className="overlay" />
+                        <div className="overlay_container">
+                          <h2 className="overlay_name">
+                            {member.fname + ' ' + member.lname}
+                          </h2>
+                          <div className="position">
+                            {parseHtml(member.description ?? '')}
+                          </div>
                         </div>
                       </div>
+                      <div className="person_info">
+                        <h2 className="name">
+                          {member.fname + ' ' + member.lname}
+                        </h2>
+                      </div>
                     </div>
-                    <div className="person_info">
-                      <h2 className="name">
-                        {member.fname + ' ' + member.lname}
-                      </h2>
-                    </div>
-                  </div>
-                );
-              }
-              return null;
-            })}
+                  );
+                }
+                return null;
+              })}
           </div>
         </div>
       </section>
@@ -582,12 +482,12 @@ export default function About() {
           </div>
         </div>
       </section>
-      <section className="infographic-section" id="statistics">
-        <div className="h2_wrapper">
-          <h2>MISSION&nbsp;STATISTICS</h2>
+      <section className="h-auto w-full pb-12" id="statistics">
+        <div className="mt-12 text-center font-bankGothic">
+          <h2 className="h2_wrapper">WHAT WE ARE&nbsp;SPECIALIZE AT</h2>
         </div>
-        <div className="circle-background relative mx-auto">
-          <Mission />
+        <div className="">
+          <Chart />
         </div>
       </section>
     </main>

@@ -43,7 +43,6 @@ export function ContactForm() {
         })}
         onSubmit={async (values, { resetForm }) => {
           if (!isVerified) {
-            console.log('Please complete the ReCAPTCHA challenge');
             return;
           }
 
@@ -54,7 +53,6 @@ export function ContactForm() {
           };
           try {
             const response = await axiosInst.post('/contactUs', obj);
-            console.log('Form submitted successfully:', response.data);
             resetForm();
           } catch (error) {
             console.error('Error submitting form:', error);

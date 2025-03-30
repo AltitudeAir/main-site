@@ -1,29 +1,29 @@
-// src/redux/bookingSlice.js
-import { createSlice } from '@reduxjs/toolkit';
+// // src/redux/bookingSlice.js
+// import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+// import { BookingSliceType } from './bookingType';
 
-const initialState = {
-    packageSlug: undefined,
-    packageName: '',
-    departureDate: null,
-    totalPerson: undefined,
-    packagePrice: undefined,
-    packageCover: '',
-};
 
-const bookingSlice = createSlice({
-    name: 'booking',
-    initialState,
-    reducers: {
-        setBookingDetails: (state, action) => {
-            state.packageSlug = action.payload.packageSlug;
-            state.packageName = action.payload.packageName;
-            state.packageCover = action.payload.packageCover;
-            state.packagePrice = action.payload.packagePrice;
-            state.departureDate = action.payload.departureDate;
-            state.totalPerson = action.payload.totalPerson;
-        },
-    },
-});
 
-export const { setBookingDetails } = bookingSlice.actions;
-export default bookingSlice.reducer;
+// const initialState: BookingSliceType = {
+//     departureDate: undefined,
+//     totalPerson: undefined,
+//     package: undefined
+// };
+
+// const bookingSlice = createSlice({
+//     name: 'booking',
+//     initialState,
+//     reducers: {
+//         setBookingDetails: (state, action: PayloadAction<BookingSliceType>) => {
+//             state = { ...state, ...action.payload }
+//         },
+//         resetBookingDetails: (state) => {
+//             state.package = initialState.package
+//             state.departureDate = initialState.departureDate;
+//             state.totalPerson = initialState.totalPerson;
+//         }
+//     },
+// });
+
+// export const { setBookingDetails, resetBookingDetails } = bookingSlice.actions;
+// export default bookingSlice.reducer;

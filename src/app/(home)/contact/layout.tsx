@@ -1,22 +1,12 @@
+import { customMetaDataGenerator } from '@/core/helpers/customMetaDataGenerator';
 import { Metadata } from 'next';
-import About from './page';
-export const metadata: Metadata = {
-  title: 'Contact',
-  description: 'Contact page',
-  openGraph: {
-    title: 'Contact Us',
-    description: 'Contact page',
-    images: [
-      {
-        url: 'https://altitudeairnepal.com/images/banner/banner.webp',
-        width: 1200,
-        height: 630,
-        alt: 'Altitude Air Contact',
-      },
-    ],
-  },
-};
+import ContactPage from './page';
 
-export default function AboutPage() {
-  return <About />;
+export const metadata: Metadata = customMetaDataGenerator({
+  title: 'Contact',
+  description: 'Contact Page',
+  ogImage: 'https://altitudeairnepal.com/images/contact/helicopter.webp',
+});
+export default function Contact() {
+  return <ContactPage />;
 }

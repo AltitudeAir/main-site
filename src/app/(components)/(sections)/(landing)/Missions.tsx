@@ -1,7 +1,7 @@
 'use client';
 import useMediaQuery from '@/core/hooks/useMediaQuery';
-import axiosInstance from '@/core/utils/axoisInst';
-import { constants } from '@/core/utils/constants';
+import { PaginatedResponseType } from '@/core/types/responseTypes';
+import { RescueMissionType } from '@/modules/rescue_mission/rescue_missionType';
 import mapboxgl, { Map as MapboxMap } from 'mapbox-gl';
 import { useEffect, useRef, useState } from 'react';
 import MissionItem from '../../(elements)/MissionItem';
@@ -14,7 +14,11 @@ interface Mission {
   coords: [number, number];
 }
 
-export default function Missions() {
+export default function Missions({
+  missions: rescueData,
+}: {
+  missions?: PaginatedResponseType<RescueMissionType>;
+}) {
   const mobileOnly = useMediaQuery('(max-width:768px)');
   const [readClicked, setreadClicked] = useState<{
     clicked: boolean;
@@ -23,12 +27,21 @@ export default function Missions() {
     clicked: false,
     clickedBy: -1,
   });
-  const [missionList, setMissionList] = useState<Mission[]>([]);
+  const missionList: Mission[] =
+    rescueData?.results.map((item) => {
+      return {
+        coords: [item.longitude, item.latitude],
+        imageUrl: item.coverImage,
+        info: item.description,
+        name: item.title,
+      };
+    }) ?? [];
+
   const [selected, setSelected] = useState<Mission>({
-    imageUrl: '',
-    name: '',
-    info: '',
-    coords: [83.9778, 28.19886],
+    imageUrl: missionList[0].imageUrl ?? '',
+    name: missionList[0].name ?? '',
+    info: missionList[0].info ?? '',
+    coords: missionList[0].coords ?? '',
   });
   const [fadeClass, setFadeClass] = useState<boolean>(true);
   const mapContainer = useRef<HTMLDivElement>(null);
@@ -37,8 +50,7 @@ export default function Missions() {
   const [lat, setLat] = useState<number>(28.5);
   const [zoom, setZoom] = useState<number>(5.5);
 
-  mapboxgl.accessToken =
-    'pk.eyJ1IjoiaWN5aG90c2hvdG8iLCJhIjoiY2tmeHQwc3E5MjRxajJxbzhmbDN1bjJ5aiJ9.mNKmhIjRyKxFkJYrm4dMqg';
+  mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_KEY ?? '';
 
   function flyTo(coords: [number, number]) {
     if (!map.current) {
@@ -56,7 +68,9 @@ export default function Missions() {
   }
 
   useEffect(() => {
-    if (map.current) return; // initialize map only once
+    if (map.current) {
+      return;
+    }
     map.current = new mapboxgl.Map({
       container: mapContainer.current!,
       style: 'mapbox://styles/icyhotshoto/cktb59q6y7iz518uqowun3l0k',
@@ -64,21 +78,22 @@ export default function Missions() {
       zoom: zoom,
     });
     map.current.scrollZoom.disable();
-  }, []);
+  }, [lng, lat, zoom]);
 
-  useEffect(() => {
-    axiosInstance.get('/rescueMission/').then((item) => {
-      let finalObj = item.data.data.map((item: any) => {
-        return {
-          imageUrl: constants.baseUrl + item.coverImage,
-          name: item.title,
-          info: item.description,
-          coords: [item.longitude, item.latitude],
-        };
-      });
-      setMissionList(finalObj);
-    });
-  }, []);
+  // useEffect(() => {
+  //   axiosInstance.get('/rescue-mission/').then((item) => {
+  //     // console.log(item.data, 'data');
+  //     let finalObj = item.data.data?.map((item: any) => {
+  //       return {
+  //         imageUrl: constants.baseUrl + item.coverImage,
+  //         name: item.title,
+  //         info: item.description,
+  //         coords: [item.longitude, item.latitude],
+  //       };
+  //     });
+  //     setMissionList(finalObj);
+  //   });
+  // }, []);
 
   const selectedItemHandler = (position: number) => {
     if (missionList.length === 0 || position > missionList.length - 1) {
@@ -103,21 +118,20 @@ export default function Missions() {
         </div>
         <div className="mission-list">
           {!mobileOnly &&
-            missionList.map((item, index) => {
+            rescueData?.results?.map((item, index) => {
               return (
                 <MissionItem
-                  key={item.imageUrl}
+                  key={index}
                   index={index}
-                  name={item.name}
-                  info={item.info}
-                  imageUrl={item.imageUrl}
+                  name={item.title}
+                  info={item.description}
+                  imageUrl={item.coverImage}
                   flyTo={flyTo}
                   readClicked={readClicked}
                   setReadClicked={setreadClicked}
                 />
               );
             })}
-
           {mobileOnly && (
             <MissionItem
               index={0}

@@ -27,7 +27,7 @@ const MobileNav = () => {
           )}
         </div>
       </div>
-      <SideDrawer show={drawer} />
+      <SideDrawer show={drawer} setDrawer={setDrawer} />
     </>
   );
 };

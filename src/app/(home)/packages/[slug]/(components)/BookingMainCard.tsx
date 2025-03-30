@@ -6,8 +6,9 @@ import CalendarPicker from '@/core/ui/components/CalendarPicker';
 import SelectInput from '@/core/ui/components/SelectInput';
 import availableSeatsApi from '@/modules/availableSeats/avaiableSeatsApi';
 import { AvailableSeatsDataType } from '@/modules/availableSeats/avaiableSeatsType';
-import { setBookingDetails } from '@/modules/bookings/bookingSlice';
+// import { setBookingDetails } from '@/modules/bookings/bookingSlice';
 import { PackagesDataType } from '@/modules/packages/packagesType';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
@@ -46,15 +47,16 @@ const BookingMainCard = ({
   packageData: PackagesDataType;
 }) => {
   const router = useRouter();
+
   const [departureDate, setDepartureDate] = useState<Date>(new Date());
-  const [selectedOption, setSelectedOption] = useState({
-    value: '1',
-    label: '1 traveler',
-  });
-  const [isOpen, toggleOpen] = useState<boolean>(false);
-  const dispatch = useAppDispatch();
+  const [selectedOption, setSelectedOption] = useState<{
+    value: string;
+    label: string;
+  }>({ value: '', label: '' });
+
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const dispatch = useAppDispatch();
+
   const generateOptions = (n: number) => {
     return Array.from({ length: n }, (_, i) => ({
       value: (i + 1).toString(),
@@ -75,7 +77,6 @@ const BookingMainCard = ({
       .catch((error: any) => {
         setIsLoading(false);
         console.error('Error fetching available seats:', error);
-        setError('Error fetching data');
       });
   }, [dispatch, packageData.slug]);
 
@@ -85,88 +86,100 @@ const BookingMainCard = ({
         ?.data as PaginatedResponseType<AvailableSeatsDataType>
   );
 
-  const handleDateSelect = (date: Date) => {
-    setDepartureDate(date);
-  };
-
-  const handleAvailableSeats = (seats: number | null) => {
-    if (seats != null && packageData.max_size) {
-      // if (seats < packageData.max_size) {
-      // console.log('seats is less than max size');
-      setOptions(generateOptions(seats));
-      // } else {
-      // setOptions(initialOptions);
-      // }
-    }
-  };
-
-  const handleSelectChange = (selectedOption: {
-    value: string;
-    label: string;
-  }) => {
-    setSelectedOption(selectedOption);
-  };
-
-  const handleBooking = () => {
-    dispatch(
-      setBookingDetails({
-        packageSlug: packageData.slug,
-        packageName: packageData.title,
-        packagePrice: packageData.price,
-        packageCover: packageData.cover_image,
-        departureDate: departureDate,
-        totalPerson: selectedOption.value,
-      })
-    );
-    router.push(`/packages/${packageData.slug}/booking`);
-  };
-
   return (
-    <div className="relative container mx-auto min-h-20 z-20">
-      <div className="absolute -top-12 left-1/2 -translate-x-1/2 min-w-72 w-11/12 sm:w-full md:w-3/4 lg:w-2/3 xl:w-1/2 grid grid-cols-12 place-content-center items-stretch bg-custom-gray border border-custom-gray-light rounded-lg shadow-md px-3">
-        <div className="col-span-3 first-of-type:border-0 border-l border-custom-gray-light py-3 first-of-type:ps-0 ps-3 hover:bg-custom-blue/10 cursor-pointer">
-          <CalendarPicker
-            customElement={true}
-            onDateSelect={handleDateSelect}
-            hasAvailableSeats={handleAvailableSeats}
-            availableSeats={availableSeats && availableSeats.results}
-          >
-            <p className="text-xs sm:text-base text-custom-blue capitalize font-normal">
-              Departure Date
-            </p>
-            <p
-              className={`text-sm sm:text-xl capitalize font-bold ${departureDate ? 'text-custom-blue' : 'text-custom-blue/50'}`}
+    <>
+      <div className="relative container mx-auto min-h-20 z-20">
+        <div className="absolute -top-12 left-1/2 -translate-x-1/2 min-w-72 w-11/12 sm:w-full md:w-3/4 lg:w-2/3 xl:w-1/2 grid sm:grid-cols-12 grid-cols-9 content-stretch place-content-center items-stretch bg-custom-gray border border-custom-gray-light rounded-lg shadow-md px-3">
+          <div className="col-span-3 first-of-type:border-0 border-l border-custom-gray-light py-3 first-of-type:ps-0 ps-3 hover:bg-custom-blue/10 cursor-pointer">
+            <CalendarPicker
+              customElement={true}
+              onDateSelect={(date) => {
+                setDepartureDate(date);
+              }}
+              hasAvailableSeats={(seats: number | null) => {
+                if (seats != null && packageData.max_size) {
+                  setOptions(generateOptions(seats));
+                }
+              }}
+              availableSeats={availableSeats && availableSeats.results}
             >
-              {departureDate
-                ? `${departureDate.getDate()} ${months[departureDate.getMonth()]} ${departureDate.getFullYear()}`
-                : 'Month Days Years'}
+              <p className="text-xs sm:text-base text-custom-blue capitalize font-normal">
+                Departure Date
+              </p>
+              <p
+                className={`text-sm sm:text-xl capitalize font-bold ${departureDate ? 'text-custom-blue' : 'text-custom-blue/50'}`}
+              >
+                {departureDate
+                  ? `${departureDate.getDate()} ${months[departureDate.getMonth()]} ${departureDate.getFullYear()}`
+                  : 'Month Days Years'}
+              </p>
+            </CalendarPicker>
+          </div>
+          <div className="relative col-span-3 first-of-type:border-0 border-l border-custom-gray-light py-3 ps-3 cursor-pointer hover:bg-custom-blue/10">
+            {packageData.pricing_type === 'fixed' ? (
+              <>
+                <p className="text-xs sm:text-base text-custom-blue capitalize font-normal">
+                  Travelers
+                </p>
+                <p className="text-sm sm:text-xl text-custom-blue capitalize font-bold">
+                  {packageData.min_size} to {packageData.max_size}
+                </p>
+              </>
+            ) : (
+              <SelectInput
+                options={options}
+                onChange={(selectedOption) => setSelectedOption(selectedOption)}
+              />
+            )}
+          </div>
+          <div className="col-span-3 first-of-type:border-0 border-l border-custom-gray-light py-3 ps-3">
+            <p className="text-xs sm:text-base text-custom-blue capitalize font-normal">
+              Total Price
             </p>
-          </CalendarPicker>
-        </div>
-        <div className="relative col-span-3 first-of-type:border-0 border-l border-custom-gray-light py-3 ps-3 cursor-pointer hover:bg-custom-blue/10">
-          <SelectInput options={options} onChange={handleSelectChange} />
-        </div>
-        <div className="col-span-3 first-of-type:border-0 border-l border-custom-gray-light py-3 ps-3">
-          <p className="text-xs sm:text-base text-custom-blue capitalize font-normal">
-            Total Price
-          </p>
-          <p className="text-sm sm:text-xl text-custom-blue font-bold">
-            $
-            {packageData.pricing_type === 'per_person'
-              ? `${packageData.price! * parseInt(selectedOption.value)} /p`
-              : `${packageData.price} /f`}
-          </p>
-        </div>
-        <div className="col-span-3 py-3 ps-3 cursor-pointer text-right">
-          <button
-            onClick={handleBooking}
-            className="rounded-md text-custom-primary bg-custom-blue hover:shadow-md h-full px-3 sm:px-6 text-xs sm:text-lg font-light"
-          >
-            Book Now
-          </button>
+            {packageData.price ? (
+              <p className="text-sm sm:text-xl text-custom-blue font-bold">
+                {packageData.currency === 'USD' ? '$' : 'NPR.'}
+                {packageData.pricing_type === 'per_person'
+                  ? `${(parseFloat(packageData.price!) * parseInt(selectedOption.value)).toFixed(packageData.currency === 'USD' ? 2 : 0)} /p`
+                  : `${parseFloat(packageData.price).toFixed(packageData.currency === 'USD' ? 2 : 0)} `}
+              </p>
+            ) : (
+              <></>
+            )}
+          </div>
+          <div className="sm:col-span-3 h-full col-span-0 hidden sm:inline-flex py-3 ps-3 cursor-pointer text-right">
+            <Link
+              href={(() => {
+                const params = new URLSearchParams({
+                  depart: departureDate.toUTCString(),
+                  travellers:
+                    packageData.pricing_type === 'fixed'
+                      ? ''
+                      : selectedOption.value,
+                });
+                return `/packages/${packageData.slug}/booking?${params.toString()}`;
+              })()}
+              className="rounded-md text-custom-primary inline-flex items-center bg-custom-blue hover:shadow-md px-3 sm:px-6 text-xs sm:text-lg font-light"
+            >
+              Book Now
+            </Link>
+          </div>
         </div>
       </div>
-    </div>
+      <Link
+        href={(() => {
+          const params = new URLSearchParams({
+            depart: departureDate.toUTCString(),
+            travellers:
+              packageData.pricing_type === 'fixed' ? '' : selectedOption.value,
+          });
+          return `/packages/${packageData.slug}/booking?${params.toString()} `;
+        })()}
+        className="fixed sm:hidden mb-5 mr-20 rounded-xl border border-white  text-white shadow-xl inline-flex z-50 text-xl items-center bg-custom-blue  bottom-0 right-0 hover:shadow-md px-3 py-2 font-light"
+      >
+        Book Now
+      </Link>
+    </>
   );
 };
 

@@ -1,4 +1,5 @@
 'use client';
+import PackageBoxCard from '@/app/(components)/PackageBoxCard';
 import { useAppDispatch, useAppSelector } from '@/core/redux/hooks';
 import { RootState } from '@/core/redux/store';
 import { PaginatedResponseType } from '@/core/types/responseTypes';
@@ -7,7 +8,6 @@ import { PackagesDataType } from '@/modules/packages/packagesType';
 import { useEffect, useRef, useState } from 'react';
 import { Navigation, Pagination } from 'swiper/modules';
 import { Swiper, SwiperRef, SwiperSlide } from 'swiper/react';
-import PackageCard from '../../(components)/PackageCard';
 
 // const packageList: PackageType[] = [
 //   {
@@ -134,10 +134,10 @@ const RelatedPackages = () => {
     <>
       <div className="bg-custom-blue/10 py-10 mt-10">
         <div className="container mx-auto">
-          <h3 className="text-2xl font-bold text-custom-blue mb-5 px-6 sm:px-0">
+          <h3 className="text-2xl font-bold text-custom-blue mb-5 px-3 sm:px-0">
             Related Packages
           </h3>
-          <div className="relative w-full my-5 transition-all duration-100 px-6 sm:px-0">
+          <div className="relative w-full my-5 transition-all duration-100 px-3 sm:px-0">
             <Swiper
               pagination={{
                 dynamicBullets: true,
@@ -152,7 +152,7 @@ const RelatedPackages = () => {
               paginatedPackagesResponse.results.length > 0 ? (
                 paginatedPackagesResponse.results.map((item, index) => (
                   <SwiperSlide key={index}>
-                    <PackageCard item={item} />
+                    <PackageBoxCard item={item} />
                   </SwiperSlide>
                 ))
               ) : (

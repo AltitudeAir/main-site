@@ -1,68 +1,41 @@
+import { fetchData } from '@/core/api/api_client';
 import { apiPaths } from '@/core/api/apiConstants';
+import { customMetaDataGenerator } from '@/core/helpers/customMetaDataGenerator';
+import { PaginatedResponseType } from '@/core/types/responseTypes';
+import { BlogType } from '@/modules/servicess/servicessType';
 import { Metadata } from 'next';
 import BlogItem from './(components)/BlogItem';
 import Title from './(components)/Title';
 
-interface BlogItemType {
-  id: string;
-  title: string;
-  description: string;
-  date: string;
-  coverImage: string;
-  direction: string;
-}
-export const metadata: Metadata = {
+export const metadata: Metadata = customMetaDataGenerator({
   title: 'Our Services',
-  description: 'Our Services Page',
-  openGraph: {
-    title: 'Our Services',
-    description: 'Our Services Page',
-    images: [
-      {
-        url: 'https://altitudeairnepal.com/images/banner/banner-4.jpg',
-        width: 1200,
-        height: 630,
-        alt: 'Our Services ',
-      },
-    ],
-    locale: 'en_US',
-    type: 'website',
-  },
-};
-export default async function Blog(props: any) {
-  const category = props.searchParams.category as string[];
-  const apiKey = process.env.NEXT_PUBLIC_API_KEY;
-  const path = category ? `/blog/${category}/` : '/blog/';
-  const response = apiKey
-    ? await fetch(`${apiPaths.baseUrl}${path}`, {
-        method: 'GET',
-        headers: {
-          'content-type': 'application/json',
-          'Access-Control-Allow-Origin': '*',
-          'X-Api-Key': apiKey,
-        },
-      })
-    : undefined;
-
-  const blogs = response ? ((await response.json()) as any) : undefined;
+  description:
+    'We are the first aviators in Nepal to bring an Airbus Helicopter for commercial operation',
+  ogImage: 'https://altitudeairnepal.com/images/banner/banner-4.jpg',
+});
+export default async function Blog() {
+  const { data: blogData, error: blogDataError } = await fetchData<
+    PaginatedResponseType<BlogType>
+  >(apiPaths.blogUrl);
 
   return (
     <main className="blog-main pb-10 ">
       <Title />
       {/* {loading && <div className="loader" />} */}
       <div className="blog-item-list " id="blog">
-        {(blogs?.data as Array<any>).map((item, index) => (
-          <BlogItem
-            blogCategory={blogs}
-            key={index}
-            id={item.slug}
-            direction={index % 2 === 0 ? 'right' : 'left'}
-            title={item.title}
-            description={item.description}
-            date={item.date}
-            coverImage={item.coverImage}
-          />
-        ))}
+        {!blogDataError &&
+          blogData?.results?.map((item, index) => (
+            <BlogItem
+              blogCategory={item.blogCategory.toString()}
+              key={index}
+              id={item.id.toString()}
+              direction={index % 2 === 0 ? 'right' : 'left'}
+              title={item.title}
+              description={item.description}
+              date={item.date}
+              coverImage={item.coverImage}
+            />
+          ))}
       </div>
     </main>
   );

@@ -1,3 +1,4 @@
+'use client';
 import { constants } from '@/core/utils/constants';
 import { dateFromSqlDateTime, parseHtml } from '@/core/utils/helper';
 import { NewsDataType } from '@/modules/news/newsType';
@@ -7,7 +8,11 @@ import { useState } from 'react';
 import NoImage from '../../../../public/images/noImage.png';
 
 export default function NewsItem({ data }: { data: NewsDataType }) {
-  const [src, setSrc] = useState(`${constants.baseUrl}${data.coverImage}`);
+  const [src, setSrc] = useState(
+    !data.coverImage?.startsWith('https://')
+      ? `${constants.baseUrl}${data.coverImage}`
+      : data.coverImage
+  );
   return (
     <Link
       href={'news/' + data.id}
@@ -31,16 +36,18 @@ export default function NewsItem({ data }: { data: NewsDataType }) {
         </h2>
 
         <div className="flex items-center justify-start gap-2">
-          <p className="text-xs font-medium text-gray-500">{data.publisher}</p>
-          <p className="text-xs text-custom-blue-light">&#9679;</p>
-          <p className="text-xs font-normal text-gray-500">
+          <div className="text-xs font-medium text-gray-500">
+            {data.publisher}
+          </div>
+          <div className="text-xs text-custom-blue-light">&#9679;</div>
+          <div className="text-xs font-normal text-gray-500">
             {dateFromSqlDateTime(data.date)}
-          </p>
+          </div>
         </div>
 
-        <p className="!text-gray-600 text-sm overflow-clip line-clamp-4">
+        <div className="!text-gray-600 text-sm overflow-clip line-clamp-4">
           {parseHtml(data.description ?? '')}
-        </p>
+        </div>
       </div>
     </Link>
   );

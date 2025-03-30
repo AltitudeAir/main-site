@@ -4,28 +4,38 @@ import DateSelector from '@/core/ui/components/DateSelector';
 import PhoneInputField from '@/core/ui/components/PhoneInput';
 import bookingApi from '@/modules/bookings/bookingApi';
 import { BookingFormType, bookingSchema } from '@/modules/bookings/bookingType';
+import packagesApi from '@/modules/packages/packagesApi';
 import { PackagesDataType } from '@/modules/packages/packagesType';
 import { useFormik } from 'formik';
-import { useState } from 'react';
+import { useParams, useSearchParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import { toFormikValidate } from 'zod-formik-adapter';
 import { months } from '../../(components)/BookingMainCard';
 
 const BookingForm = () => {
-  const { packageSlug, packageName, packagePrice, departureDate, totalPerson } =
-    useAppSelector((state) => state.booking);
-
+  const searchParams = useSearchParams();
+  const params = useParams();
+  const totalPerson = searchParams.get('travellers');
   const [isLoading, setIsLoading] = useState(false);
   const [acceptTerms, setAcceptTerms] = useState(false);
   const [isOpen, toggleOpen] = useState<boolean>(false);
   const [kDepartureDate, setDepartureDate] = useState<Date>(
-    departureDate ?? new Date()
+    searchParams.get('depart')
+      ? new Date(searchParams.get('depart')!)
+      : new Date()
   );
-
   const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    dispatch(
+      packagesApi.endpoints.getEachPackage.initiate(params.slug as string)
+    );
+  }, [dispatch, params.slug]);
 
   const packageData = useAppSelector(
     (state: RootState) =>
-      state.baseApi.queries[`getPackage`]?.data as PackagesDataType
+      state.baseApi.queries[`getEachPackage("${params.slug}")`]
+        ?.data as PackagesDataType
   );
 
   const handleChange = (value: Date) => {
@@ -45,7 +55,7 @@ const BookingForm = () => {
       const response = await Promise.resolve(
         dispatch(
           bookingApi.endpoints.createBooking.initiate({
-            package: packageSlug ?? packageData?.slug,
+            package: packageData?.slug,
             departureDate: values.departureDate,
             noOfTravelers: values.noOfTravelers,
             totalPrice: values.totalPrice,
@@ -71,12 +81,17 @@ const BookingForm = () => {
   const formik = useFormik<BookingFormType>({
     enableReinitialize: true,
     initialValues: {
-      package: packageSlug ?? packageData?.slug,
+      package: packageData?.slug ?? params.slug,
       departureDate: kDepartureDate,
-      noOfTravelers: totalPerson ? parseInt(totalPerson) : 1,
+      noOfTravelers:
+        totalPerson && totalPerson?.length != 0 ? parseInt(totalPerson) : 1,
       totalPrice: (
-        (packagePrice ?? packageData?.price ?? 0) *
-        (totalPerson ? parseInt(totalPerson) : 1)
+        (packageData?.price ?? packageData?.price
+          ? parseFloat(packageData.price!)
+          : 0) *
+        (totalPerson && packageData?.pricing_type === 'per_person'
+          ? parseInt(totalPerson)
+          : 1)
       ).toString(),
       fullName: '',
       email: '',
@@ -173,21 +188,37 @@ const BookingForm = () => {
               </label>
               <input
                 type="number"
-                max={6}
-                min={1}
+                max={packageData?.max_size ?? 6}
+                min={packageData?.min_size ?? 1}
                 className="w-full h-10 px-2 border border-custom-gray-light rounded"
-                {...formik.getFieldProps('noOfTravelers')}
+                value={
+                  packageData?.pricing_type === 'per_person'
+                    ? formik.values.noOfTravelers || 1
+                    : ''
+                }
+                placeholder={
+                  packageData?.pricing_type !== 'per_person' &&
+                  packageData?.min_size &&
+                  packageData?.max_size
+                    ? `${packageData.min_size} to ${packageData.max_size}`
+                    : ''
+                }
                 onChange={(e) => {
-                  formik.setFieldValue('noOfTravelers', e.target.value);
+                  const value = parseInt(e.target.value);
+                  formik.setFieldValue('noOfTravelers', value);
+
                   formik.setFieldValue(
                     'totalPrice',
                     (
-                      (packagePrice ?? packageData.price ?? 0) *
-                      parseInt(e.target.value)
+                      (packageData?.price ?? packageData.price
+                        ? parseFloat(packageData.price!)
+                        : 0) *
+                      (packageData?.pricing_type === 'per_person' ? value : 1)
                     ).toString()
                   );
                 }}
                 onBlur={formik.handleBlur}
+                disabled={packageData?.pricing_type !== 'per_person'}
               />
             </div>
           </div>
@@ -259,8 +290,8 @@ const BookingForm = () => {
 
           <button
             type="submit"
-            className={`${acceptTerms ? 'text-custom-primary bg-custom-blue hover:bg-opacity-95 hover:shadow-lg' : 'text-custom-gray bg-custom-blue/50'} w-full py-3 px-6 rounded-md`}
-            disabled={!acceptTerms}
+            className={`text-custom-primary bg-custom-blue hover:bg-opacity-95 hover:shadow-lg w-full disabled:text-custom-gray disabled:bg-custom-blue/50 py-3 px-6 rounded-md`}
+            disabled={!formik.isValid}
           >
             Proceed
           </button>
@@ -274,7 +305,7 @@ const BookingForm = () => {
                 </h2>
                 <div className="mb-4">
                   <h3 className="text-white text-sm font-medium mb-2">
-                    {packageName}
+                    {packageData?.title}
                   </h3>
                   <div className="px-2 py-3 bg-custom-gray/5 flex flex-col gap-2">
                     <div className="flex items-start justify-between">
@@ -282,7 +313,7 @@ const BookingForm = () => {
                         Duration:
                       </p>
                       <p className="text-white text-xs font-light text-right">
-                        1 Day
+                        {packageData?.duration}
                       </p>
                     </div>
                     <div className="flex items-start justify-between">
@@ -290,16 +321,27 @@ const BookingForm = () => {
                         Trip Start:
                       </p>
                       <p className="text-white text-xs font-light text-right">
-                        2024-06-27
+                        {`${formik.values.departureDate?.getFullYear()}-${formik.values.departureDate?.getMonth()}-${formik.values.departureDate?.getDate()}`}
                       </p>
                     </div>
                     <div className="flex items-start justify-between">
                       <p className="shrink-0 text-custom-gray text-xs font-light">
                         No. of Traveler:
                       </p>
-                      <p className="text-white text-xs font-light text-right">
-                        2 Person(s)
-                      </p>
+                      {packageData?.pricing_type === 'per_person' ? (
+                        <p className="text-white text-xs font-light text-right">
+                          {packageData?.min_size} to {packageData?.max_size}{' '}
+                          Person(s)
+                        </p>
+                      ) : (
+                        packageData?.min_size &&
+                        packageData?.max_size && (
+                          <p className="text-white text-xs font-light text-right">
+                            {packageData?.min_size} to {packageData?.max_size}{' '}
+                            Person(s)
+                          </p>
+                        )
+                      )}
                     </div>
                     {/* <div className="flex items-start justify-between">
                       <p className="shrink-0 text-custom-gray text-xs font-light">
@@ -321,12 +363,20 @@ const BookingForm = () => {
                   <div className="flex items-start justify-between">
                     <p className="shrink-0 text-custom-gray text-xs font-light">
                       Package Price:
-                      <br />
-                      (US${packagePrice} x {formik.values['noOfTravelers']}{' '}
+                      <br />({packageData?.currency === 'USD' ? '$' : 'NPR.'}
+                      {packageData?.price
+                        ? parseFloat(packageData.price).toFixed(
+                            packageData.currency === 'USD' ? 2 : 0
+                          )
+                        : '-'}
+                      {packageData?.pricing_type === 'fixed'
+                        ? ` for ${packageData?.min_size} to ${packageData?.max_size} `
+                        : ` x ${formik.values.noOfTravelers} `}
                       Person(s))
                     </p>
                     <p className="text-white text-xs font-light text-right">
-                      US${formik.values['totalPrice']}
+                      {packageData?.currency === 'USD' ? '$' : 'NPR.'}
+                      {formik.values['totalPrice']}
                     </p>
                   </div>
                   <div className="flex items-start justify-between">
@@ -334,7 +384,8 @@ const BookingForm = () => {
                       Total Price:
                     </p>
                     <p className="text-white text-xs font-light text-right">
-                      US${formik.values['totalPrice']}
+                      {packageData?.currency === 'USD' ? '$' : 'NPR.'}
+                      {formik.values['totalPrice']}
                     </p>
                   </div>
                   {/* <div className="flex items-start justify-between">

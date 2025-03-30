@@ -23,7 +23,6 @@ const availableSeatsApi = baseApi
                     return currentArg !== previousArg;
                 },
                 transformResponse: (response: any) => {
-                    // console.log(response); 
                     return response as PaginatedResponseType<AvailableSeatsDataType>;
                 },
             }),

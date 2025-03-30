@@ -1,6 +1,5 @@
 'use client';
-import { constants } from '@/core/utils/constants';
-import { dateFromSqlDateTime, parseHtml } from '@/core/utils/helper';
+import { parseHtml } from '@/core/utils/helper';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -29,7 +28,7 @@ export default function BlogItem({
       <div className="image_container">
         <div className="absolute_shadow relative " />
         <Image
-          src={constants.baseUrl + coverImage}
+          src={coverImage as string}
           alt="blog heli image"
           //   onError={(e) => {
           //     e.currentTarget.src = '/images/errors/placeholder.webp';
@@ -45,10 +44,7 @@ export default function BlogItem({
         <Link href={`/blog/${id}`} passHref>
           <h2>{title}</h2>
         </Link>
-        <p className="publish-date">
-          Published on {date ? dateFromSqlDateTime(date) : ''}
-        </p>
-        <p>{parseHtml(description ?? '')}</p>
+        <div>{parseHtml(description ?? '')}</div>
         <Link href={`/blog/${id}`}>
           <div className="mt-3">
             <button className="font-extrabold p-3 border-[2px] cursor-pointer hover:bg-[#c0d9f499] transition-colors duration-500 ease-in-out">

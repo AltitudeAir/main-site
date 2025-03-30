@@ -56,7 +56,7 @@ export default function Gallery() {
 
   return (
     <main className="gallery-main">
-      <section className="h-[80vh] w-full mt-20 relative">
+      <section className="w-full mt-20 relative h-[30vh] md:h-[50vh] lg:h-[80vh] 2xl:h-[80vh]">
         <div className="">
           <button
             disabled={isBeginning}

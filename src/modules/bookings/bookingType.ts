@@ -2,6 +2,12 @@ import { nonempty } from "@/core/utils/formUtils";
 import { z } from "zod";
 import { PackagesDataType } from "../packages/packagesType";
 
+export type BookingSliceType = {
+    departureDate?: Date,
+    totalPerson?: string,
+    package?: PackagesDataType
+}
+
 export const transactionSchema = z.object({
     amount: z.string().optional(),
     payment_url: z.string(),
