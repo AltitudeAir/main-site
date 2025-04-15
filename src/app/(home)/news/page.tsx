@@ -9,7 +9,8 @@ import { Metadata } from 'next';
 export const metadata: Metadata = customMetaDataGenerator({
   title: 'News',
   description: 'Recent News & Events in Altitude air Neapl',
-  ogImage: 'https://altitudeairnepal.com/images/banner/banner-2.webp',
+  ogImage1: 'https://altitudeairnepal.com/images/resized-images/News.webp',
+  ogImage2: 'https://altitudeairnepal.com/images/resized-images/News.webp',
 });
 export default async function NewsList() {
   const { data: newsData, error: newsMessageDataError } = await fetchData<

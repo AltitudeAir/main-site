@@ -1,7 +1,7 @@
 'use client';
 import useMediaQuery from '@/core/hooks/useMediaQuery';
 import { PaginatedResponseType } from '@/core/types/responseTypes';
-import { RescueMissionType } from '@/modules/rescue_mission/rescue_missionType';
+import { Coordinates, RescueMissionType } from '@/modules/rescue_mission/rescue_missionType';
 import mapboxgl, { Map as MapboxMap } from 'mapbox-gl';
 import { useEffect, useRef, useState } from 'react';
 import MissionItem from '../../(elements)/MissionItem';
@@ -11,7 +11,7 @@ interface Mission {
   imageUrl: string;
   name: string;
   info: string;
-  coords: [number, number];
+  coords: Coordinates;
 }
 
 export default function Missions({
@@ -30,7 +30,10 @@ export default function Missions({
   const missionList: Mission[] =
     rescueData?.results.map((item) => {
       return {
-        coords: [item.longitude, item.latitude],
+        coords: {
+          latitude: item.latitude,
+          longitude: item.longitude,
+        },
         imageUrl: item.coverImage,
         info: item.description,
         name: item.title,
@@ -52,18 +55,19 @@ export default function Missions({
 
   mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_KEY ?? '';
 
-  function flyTo(coords: [number, number]) {
+  function flyTo(coords: Coordinates) {
     if (!map.current) {
       return;
     }
+    
     map.current.flyTo({
-      center: coords,
+      center: [coords.longitude, coords.latitude],
       minZoom: 5,
       speed: 0.4,
       zoom: 12,
     });
     const marker1 = new mapboxgl.Marker({ color: '#fbc200' })
-      .setLngLat(coords)
+      .setLngLat([coords.longitude, coords.latitude])
       .addTo(map.current);
   }
 
@@ -79,21 +83,6 @@ export default function Missions({
     });
     map.current.scrollZoom.disable();
   }, [lng, lat, zoom]);
-
-  // useEffect(() => {
-  //   axiosInstance.get('/rescue-mission/').then((item) => {
-  //     // console.log(item.data, 'data');
-  //     let finalObj = item.data.data?.map((item: any) => {
-  //       return {
-  //         imageUrl: constants.baseUrl + item.coverImage,
-  //         name: item.title,
-  //         info: item.description,
-  //         coords: [item.longitude, item.latitude],
-  //       };
-  //     });
-  //     setMissionList(finalObj);
-  //   });
-  // }, []);
 
   const selectedItemHandler = (position: number) => {
     if (missionList.length === 0 || position > missionList.length - 1) {
@@ -124,6 +113,10 @@ export default function Missions({
                   key={index}
                   index={index}
                   name={item.title}
+                  coords={{
+                    latitude: item.latitude,
+                    longitude: item.longitude,
+                  }}
                   info={item.description}
                   imageUrl={item.coverImage}
                   flyTo={flyTo}
@@ -138,6 +131,7 @@ export default function Missions({
               imageUrl={selected.imageUrl}
               info={selected.info}
               name={selected.name}
+              coords={selected.coords}
               readClicked={readClicked}
               setReadClicked={setreadClicked}
               fadeClass={fadeClass}

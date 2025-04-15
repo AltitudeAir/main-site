@@ -37,8 +37,6 @@ export default async function ContactPage() {
     PaginatedResponseType<GeneralType>
   >(apiPaths.getGeneralUrl);
 
-  //   mapboxgl.accessToken =
-  //     'pk.eyJ1IjoiaWN5aG90c2hvdG8iLCJhIjoiY2tmeHQwc3E5MjRxajJxbzhmbDN1bjJ5aiJ9.mNKmhIjRyKxFkJYrm4dMqg';
   //   const mapContainer = useRef(null);
   //   const map = useRef<any>(null);
 

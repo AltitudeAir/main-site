@@ -2,8 +2,6 @@
 // import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 // import { BookingSliceType } from './bookingType';
 
-
-
 // const initialState: BookingSliceType = {
 //     departureDate: undefined,
 //     totalPerson: undefined,

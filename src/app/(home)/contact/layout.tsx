@@ -5,7 +5,8 @@ import ContactPage from './page';
 export const metadata: Metadata = customMetaDataGenerator({
   title: 'Contact',
   description: 'Contact Page',
-  ogImage: 'https://altitudeairnepal.com/images/contact/helicopter.webp',
+  ogImage1: 'https://altitudeairnepal.com/images/resized-images/Contact.jpg',
+  ogImage2: 'https://altitudeairnepal.com/images/resized-images/Contact.jpg',
 });
 export default function Contact() {
   return <ContactPage />;

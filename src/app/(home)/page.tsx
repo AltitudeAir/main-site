@@ -5,10 +5,14 @@ import {
   ObjectResponseType,
   PaginatedResponseType,
 } from '@/core/types/responseTypes';
+import { footerTag } from '@/modules/footer/footerApi';
 import { Footer } from '@/modules/footer/footerType';
 import { General } from '@/modules/general/footerTypes';
+import { packagesTag } from '@/modules/packages/packagesApi';
 import { PackagesDataType } from '@/modules/packages/packagesType';
+import { rescueMissionTag } from '@/modules/rescue_mission/rescue_missionApi';
 import { RescueMissionType } from '@/modules/rescue_mission/rescue_missionType';
+import { reviewTag } from '@/modules/review/reviewApi';
 import { ReviewType } from '@/modules/review/reviewType';
 import Enquiry from '../(components)/(elements)/Enquiry';
 import EnquiryDetails from '../(components)/(elements)/EnquiryDetails';
@@ -23,20 +27,21 @@ import Reviews from '../(components)/(sections)/(landing)/Reviews';
 export default async function Home() {
   const { data: paginatedPackagesResponse, error: packageError } =
     await fetchData<PaginatedResponseType<PackagesDataType>>(
-      apiPaths.getPackages
+      apiPaths.getPackages,
+      { tags: [packagesTag] }
     );
 
   const { data: rescueMissions, error: rescueMissionsError } = await fetchData<
     PaginatedResponseType<RescueMissionType>
-  >(apiPaths.rescuemissionUrl);
+  >(apiPaths.rescuemissionUrl, { tags: [rescueMissionTag] });
 
   const { data: reviews, error: reviewsError } = await fetchData<
     PaginatedResponseType<ReviewType>
-  >(apiPaths.reviewurl);
+  >(apiPaths.reviewurl, { tags: [reviewTag] });
 
   const { data: footerdata, error: footerdataError } = await fetchData<
     ArrayResponseType<Footer>
-  >(apiPaths.footerUrl);
+  >(apiPaths.footerUrl, { tags: [footerTag] });
 
   const { data: generalData, error: generalDataError } = await fetchData<
     ObjectResponseType<General>

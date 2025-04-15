@@ -5,7 +5,8 @@ export const metadata: Metadata = customMetaDataGenerator({
   title: 'Our Services',
   description:
     'We are the first aviators in Nepal to bring an Airbus Helicopter for commercial operation',
-  ogImage: 'https://altitudeairnepal.com/images/banner/banner-4.jpg',
+  ogImage1: 'https://altitudeairnepal.com/images/banner/Services.JPG',
+  ogImage2: 'https://altitudeairnepal.com/images/banner/Services.JPG',
 });
 export default function BlogPage() {
   return <BlogItem />;

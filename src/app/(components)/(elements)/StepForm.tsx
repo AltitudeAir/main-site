@@ -530,8 +530,7 @@ function Destination({
   const [currentlyClicked, setCurrentlyClicked] = useState(-1);
   const currentlyRef = useRef(-1);
 
-  mapboxgl.accessToken =
-    'pk.eyJ1IjoiaWN5aG90c2hvdG8iLCJhIjoiY2tmeHQwc3E5MjRxajJxbzhmbDN1bjJ5aiJ9.mNKmhIjRyKxFkJYrm4dMqg';
+  mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_KEY ?? '';
   const mapContainer = useRef(null);
   const map = useRef<any>(null);
   const lng = 85.3343;

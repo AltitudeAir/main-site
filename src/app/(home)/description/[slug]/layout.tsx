@@ -13,7 +13,8 @@ export async function generateMetadata({
 
   return customMetaDataGenerator({
     title: dynamicTitle,
-    ogImage: dynamicOgImage,
+    ogImage1: dynamicOgImage,
+    ogImage2: dynamicOgImage,
   });
 }
 export default function FleetsPage() {

@@ -20,20 +20,6 @@ export default function BlogItem() {
   const [url, setUrl] = useState('');
   const [news, setNews] = useState<BlogItemType[]>([]);
 
-  // console.log(param, 'param');
-
-  // const [blogItem, setBlogItem] = useState<BlogItemType>({
-  //   id: null,
-  //   title: '',
-  //   description: '',
-  //   content: '',
-  //   direction: '',
-  //   date: null,
-  //   publisher: '',
-  //   coverImage: '',
-  //   blogCategory: null,
-  // });
-
   useEffect(() => {
     dispatch(blogApi.endpoints.getEachBlog.initiate(parseInt(blogId)));
   }, [dispatch, blogId]);

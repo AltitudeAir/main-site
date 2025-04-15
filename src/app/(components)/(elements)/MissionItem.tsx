@@ -1,5 +1,6 @@
 import useMediaQuery from '@/core/hooks/useMediaQuery';
 import useScroll from '@/core/hooks/useScroll';
+import { Coordinates } from '@/modules/rescue_mission/rescue_missionType';
 import Image from 'next/image';
 import React, {
   Dispatch,
@@ -9,17 +10,14 @@ import React, {
   useState,
 } from 'react';
 
-interface Coordinates {
-  latitude: number;
-  longitude: number;
-}
 
 interface MissionItemProps {
   index: number;
   imageUrl: string;
   name: string;
   info: string;
-  flyTo?: (coords: [number, number]) => void;
+  coords: Coordinates;
+  flyTo?: (coords: Coordinates) => void;
   readClicked: { clicked: boolean; clickedBy: number };
   setReadClicked: Dispatch<
     SetStateAction<{
@@ -35,6 +33,7 @@ const MissionItem: React.FC<MissionItemProps> = ({
   imageUrl,
   name,
   info,
+  coords,
   flyTo,
   readClicked,
   setReadClicked,
@@ -107,7 +106,9 @@ const MissionItem: React.FC<MissionItemProps> = ({
     if (pos) {
       if (pos <= 230 && pos >= 110) {
         if (!readClicked.clicked) {
-          // flyTo(coords);
+          if(flyTo != null){
+            flyTo!(coords);
+          }
           setOnFocus(true);
           currState.current = true;
         }

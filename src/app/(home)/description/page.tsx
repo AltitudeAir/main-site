@@ -9,7 +9,8 @@ interface ChoppersType {
 }
 export const metadata: Metadata = customMetaDataGenerator({
   title: 'Fleets',
-  ogImage: 'https://altitudeairnepal.com/images/banner/banner.webp',
+  ogImage1: 'https://altitudeairnepal.com/images/resized-images/Fleets.jpg',
+  ogImage2: 'https://altitudeairnepal.com/images/resized-images/Fleets.jpg',
 });
 const Page = () => {
   const choppers: ChoppersType[] = [

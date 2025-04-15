@@ -21,7 +21,8 @@ export const generateMetadata = async () => {
 
   const metadata: Metadata = customMetaDataGenerator({
     title: 'About Us',
-    ogImage: 'https://altitudeairnepal.com/images/banner/banner-2.webp',
+    ogImage1: 'https://altitudeairnepal.com/images/resized-images/Abouts.webp',
+    ogImage2: 'https://altitudeairnepal.com/images/resized-images/Abouts.webp',
     description: introduction,
   });
   return metadata;

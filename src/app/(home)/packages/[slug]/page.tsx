@@ -27,7 +27,8 @@ export async function generateMetadata({
 
   return customMetaDataGenerator({
     title: dynamicTitle,
-    ogImage: dynamicOgImage,
+    ogImage1: dynamicOgImage,
+    ogImage2: dynamicOgImage,
   });
 }
 

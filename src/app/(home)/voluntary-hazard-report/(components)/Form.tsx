@@ -25,6 +25,7 @@ const Forms = () => {
   };
 
   const onSubmit = (values: HazardFormType) => {
+    if (isLoading) return;
     setIsLoading(true);
     try {
       const responseData = dispatch(
@@ -171,7 +172,7 @@ const Forms = () => {
         <div className="form-field">
           <div />
           <button className="button-outline-light" type="submit">
-            Submit
+            {isLoading ? 'Submitting...' : 'Submit'}
           </button>
         </div>
       </form>

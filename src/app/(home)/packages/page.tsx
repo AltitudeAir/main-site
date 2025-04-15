@@ -10,7 +10,10 @@ export const metadata: Metadata = customMetaDataGenerator({
   title: 'Packages',
   description:
     'Helicopter tour over the Himalayas is indeed a lifetime experience. The magnificent views of the Himalayas is the unique specialty of helicopter treks.',
-  ogImage: 'https://altitudeairnepal.com/images/banner/banner.webp',
+  ogImage1:
+    'https://9fcd-2407-1400-aa36-7c28-1022-ae5c-a105-b50f.ngrok-free.app/images/resized-images/Package.jpg',
+  ogImage2:
+    'https://9fcd-2407-1400-aa36-7c28-1022-ae5c-a105-b50f.ngrok-free.app/images/resized-images/Package.jpg',
 });
 export default async function Packages() {
   const { data: paginatedPackagesResponse } = await fetchData<
