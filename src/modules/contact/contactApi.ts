@@ -9,18 +9,10 @@ const contactApi = baseApi
     endpoints: (builder) => ({
       postContactUs: builder.mutation<any, ContactFormType>({
         query: ({ ...payload }) => {
-          // var formData = new FormData();
-          // if (payload.firstName) formData.append('firstName', payload.firstName);
-          // if (payload.lastName) formData.append('lastName', payload.lastName);
-          // if (payload.date) formData.append('date', payload.date.toISOString());
-          // if (payload.details != undefined) formData.append('details', payload.details.toString());
-          // if (payload.email) formData.append('email', payload.email);
-          // if (payload.tel) formData.append('phone', payload.tel);
-
           const data = {
             ...payload,
             phone: payload.tel,
-            date: `${payload.date.getFullYear()}-${payload.date.getMonth()}-${payload.date.getDate()}`,
+            date: payload.date.toISOString().split('T')[0],
           };
 
           return {
@@ -33,11 +25,10 @@ const contactApi = baseApi
         invalidatesTags: [{ type: 'Contacts', id: 'LIST' }],
         async onQueryStarted(payload, { queryFulfilled }) {
           try {
-            await queryFulfilled;
-            toast.success(' Message successfully added.');
+            const response = await queryFulfilled;
+            toast.success(response.data.message);
           } catch (err) {
             console.log(err);
-            // toast.error();
             toast.error('Opps! Message add failed.');
           }
         },

@@ -9,7 +9,7 @@ export default function GetInTouch({
   footerdata?: ArrayResponseType<Footer> | undefined;
 }) {
   const [showModal, setShowModal] = useState(false);
-  const hotline = footerdata?.data[0].hotline;
+  const hotline = footerdata?.data?.[0]?.hotline;
   const firstHotline = hotline?.split('\n')[0].trim();
 
   const openModal = () => {

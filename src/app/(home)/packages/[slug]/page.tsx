@@ -100,7 +100,7 @@ export default async function Packages({
             <PackageGallery packageSlug={packageData.slug} />
             <PackageHighlights
               data={packageData.description}
-              hotline={footerdata?.data[0].hotline ?? '-'}
+              hotline={footerdata?.data?.[0]?.hotline ?? '-'}
             />
           </div>
           <div className="col-span-12 md:col-span-4 w-full flex flex-col gap-4">

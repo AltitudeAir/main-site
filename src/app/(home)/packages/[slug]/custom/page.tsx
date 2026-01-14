@@ -29,7 +29,7 @@ const PackageLinkPage = ({ params }: { params: { slug: string } }) => {
   useEffect(() => {
     axiosInst.get('/footer/').then((result) => {
       const data = result.data.data;
-      setHotline(data[0].hotline);
+      setHotline(data?.[0]?.hotline);
     });
   }, []);
 

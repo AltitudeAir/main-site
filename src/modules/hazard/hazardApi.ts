@@ -20,10 +20,8 @@ const hazardApi = baseApi.injectEndpoints({
       },
       async onQueryStarted(payload, { queryFulfilled }) {
         try {
-          await queryFulfilled;
-          toast.success(
-            'Your request has been submitted. Check your email or phone for verification.'
-          );
+          const response = await queryFulfilled;
+          toast.success(response.data.message);
         } catch (err) {
           console.log(err);
           toast.error('Error submitting form!');

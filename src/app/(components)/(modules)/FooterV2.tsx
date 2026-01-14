@@ -152,7 +152,7 @@ export default async function FooterV2() {
         </div>
 
         <div className="copyright_container font-gilroy">
-          {footerData?.data?.[0].copyright
+          {footerData?.data?.[0]?.copyright
             ? parseHtml(footerData?.data?.[0].copyright)
             : ''}
           <p>

@@ -1,7 +1,10 @@
 'use client';
 import useMediaQuery from '@/core/hooks/useMediaQuery';
 import { PaginatedResponseType } from '@/core/types/responseTypes';
-import { Coordinates, RescueMissionType } from '@/modules/rescue_mission/rescue_missionType';
+import {
+  Coordinates,
+  RescueMissionType,
+} from '@/modules/rescue_mission/rescue_missionType';
 import mapboxgl, { Map as MapboxMap } from 'mapbox-gl';
 import { useEffect, useRef, useState } from 'react';
 import MissionItem from '../../(elements)/MissionItem';
@@ -41,10 +44,10 @@ export default function Missions({
     }) ?? [];
 
   const [selected, setSelected] = useState<Mission>({
-    imageUrl: missionList[0].imageUrl ?? '',
-    name: missionList[0].name ?? '',
-    info: missionList[0].info ?? '',
-    coords: missionList[0].coords ?? '',
+    imageUrl: missionList[0]?.imageUrl ?? '',
+    name: missionList[0]?.name ?? '',
+    info: missionList[0]?.info ?? '',
+    coords: missionList[0]?.coords ?? '',
   });
   const [fadeClass, setFadeClass] = useState<boolean>(true);
   const mapContainer = useRef<HTMLDivElement>(null);
@@ -59,7 +62,7 @@ export default function Missions({
     if (!map.current) {
       return;
     }
-    
+
     map.current.flyTo({
       center: [coords.longitude, coords.latitude],
       minZoom: 5,

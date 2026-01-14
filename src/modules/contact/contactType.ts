@@ -2,12 +2,19 @@ import { nonempty } from '@/core/utils/formUtils';
 import { z } from 'zod';
 
 export const contactFormSchema = z.object({
-  firstName: z.string().pipe(nonempty),
-  lastName: z.string().pipe(nonempty),
-  email: z.string().email().pipe(nonempty),
-  tel: z.string().pipe(nonempty),
-  details: z.string().optional(),
+  firstName: z
+    .string()
+    .max(32, 'Must be less than or equal to 32 characters.')
+    .pipe(nonempty),
+  lastName: z
+    .string()
+    .max(32, 'Must be less than or equal to 32 characters.')
+    .pipe(nonempty),
+  email: z.string().email('Not a valid email'),
+  tel: z.string().min(10, 'Number must be at least 10 digits'),
   date: z.date(),
+  details: z.string().max(5000).optional().nullable(),
+  isContact: z.boolean().optional().nullable(),
 });
 
 export type ContactFormType = z.infer<typeof contactFormSchema>;

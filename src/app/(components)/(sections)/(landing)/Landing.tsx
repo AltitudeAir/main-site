@@ -45,9 +45,9 @@ async function Landing({
             <h3 className="text-xl font-black pt-1  text-gray-200">
               Contact us at:
             </h3>
-            <a href={`tel:${footerdata?.data[0].hotline}`} className=" ">
+            <a href={`tel:${footerdata?.data?.[0]?.hotline}`} className=" ">
               <h2 className="text-lg w-48 font-black text-custom-primary">
-                {footerdata?.data[0].hotline}
+                {footerdata?.data?.[0]?.hotline}
               </h2>
             </a>
           </div>

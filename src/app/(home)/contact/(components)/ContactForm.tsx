@@ -22,10 +22,11 @@ const ContactForm = () => {
       await Promise.resolve(
         dispatch(contactApi.endpoints.postContactUs.initiate(values))
       );
+      setIsLoading(false);
     } catch (error) {
       console.log(error);
+      setIsLoading(false);
     }
-    setIsLoading(false);
   };
 
   const validateForm = (values: ContactFormType) => {
@@ -46,6 +47,8 @@ const ContactForm = () => {
       email: '',
       date: new Date(Date.now()),
       tel: '',
+      isContact: true,
+      details: '',
     },
     validate: validateForm,
     validateOnChange: true,
@@ -131,8 +134,8 @@ const ContactForm = () => {
       </div> */}
       <div className="mb-14 flex flex-col gap-1">
         <textarea
-          className="w-full p-2 py-8 text-white border bg-white/80  rounded outline-none focus-visible:ring-2"
-          rows={5}
+          className="w-full px-2 border bg-white/80 rounded placeholder:font-light outline-none focus-visible:ring-2"
+          rows={10}
           placeholder="Type your message here"
           {...formik.getFieldProps('details')}
         ></textarea>
@@ -144,7 +147,7 @@ const ContactForm = () => {
         type="submit"
         className={`text-white font-bold bg-custom-blue hover:bg-opacity-95 hover:shadow-lg h-16 px-10 rounded`}
       >
-        Send Message
+        {isLoading ? 'Loading...' : 'Send Message'}
       </button>
     </form>
   );

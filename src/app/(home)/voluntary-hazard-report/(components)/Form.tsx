@@ -24,26 +24,19 @@ const Forms = () => {
     }
   };
 
-  const onSubmit = (values: HazardFormType) => {
+  const onSubmit = async (values: HazardFormType) => {
     if (isLoading) return;
     setIsLoading(true);
     try {
-      const responseData = dispatch(
+      const responseData = await dispatch(
         hazardApi.endpoints.postHazard.initiate(values)
       );
-      if (Object.prototype.hasOwnProperty.call(responseData, 'data')) {
-        toast.success(
-          'Your request has been submitted. Check your email or phone for verification.'
-        );
-        router.push('/');
-      } else if (Object.prototype.hasOwnProperty.call(responseData, 'error')) {
-        toast.error('Error submitting form!');
-      }
+      setIsLoading(false);
     } catch (error) {
       console.log(error);
       toast.error('Error submitting form!');
+      setIsLoading(false);
     }
-    setIsLoading(false);
   };
 
   const formik = useFormik<HazardFormType>({
@@ -54,32 +47,12 @@ const Forms = () => {
       tel: '',
       date: new Date(),
       details: '',
+      isContact: false,
     },
     validate: validateForm,
     validateOnChange: true,
     onSubmit,
   });
-
-  // async function formSubmitHandler(values: HazardFormType, resetForm: any) {
-  //   const date = `${values.date?.getFullYear()}-${((values.date?.getMonth() ?? 0) + 1).toString().padStart(2, '0')}-${values.date?.getDate().toString().padStart(2, '0')}`;
-
-  //   let obj = {
-  //     ...values,
-  //     isContact: false,
-  //     date: date,
-  //   };
-  //   let res;
-  //   try {
-  //     res = await axiosInstance.post('/contactUs', obj);
-  //     toast.success(
-  //       'Your request has been submitted. Check your email or phone for verification.'
-  //     );
-  //   } catch (error) {
-  //     toast.error('Error submitting form!');
-  //     return;
-  //   }
-  //   resetForm();
-  // }
 
   return (
     <div>

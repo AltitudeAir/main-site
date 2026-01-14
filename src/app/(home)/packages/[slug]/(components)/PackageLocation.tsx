@@ -26,8 +26,8 @@ export default function PackageLocation({
       });
 
       new mapboxgl.Marker({ color: '#fbc200' })
-      .setLngLat([longtitude, latitude])
-      .addTo(map.current);
+        .setLngLat([longtitude, latitude])
+        .addTo(map.current);
     }
   }, []);
 
