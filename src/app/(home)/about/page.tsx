@@ -1,3 +1,5 @@
+'use server';
+
 // import Rellax from 'rellax';
 import ImageWithFallback from '@/app/(components)/(elements)/ImageWithFallback';
 import { Chart } from '@/app/(components)/(modules)/PieChart';
@@ -14,7 +16,11 @@ import { CrewsType } from '@/modules/crew/crewType';
 export default async function About() {
   const { data: bodMessageData, error: bodMessageDataError } = await fetchData<
     PaginatedResponseType<BODMessageType>
-  >(apiPaths.getBodMessageUrl);
+  >(apiPaths.getBodMessageUrl, {
+    cacheOptions: {
+      revalidate: 60 * 60 * 24 * 7,
+    },
+  });
 
   const { data: bodData, error: bodDataError } = await fetchData<
     PaginatedResponseType<BODsType>
@@ -368,19 +374,66 @@ export default async function About() {
         </div>
       </section>
 
+      {!crewDataError &&
+        crewData?.filter((member) => member.team === 'mission').length && (
+          <section className="three_info_section">
+            <div className="crew_info_wrapper">
+              <div className="h2_wrapper">
+                <h2>
+                  CARGO &nbsp; SLING &nbsp; AND &nbsp; HUMAN &nbsp; LONGLINE
+                  &nbsp; RESCUE &nbsp; MISSION
+                </h2>
+              </div>
+
+              <div className="card_container">
+                {crewData?.map((member) => {
+                  if (member.team === 'mission') {
+                    return (
+                      <div className="crew_card" key={member.id}>
+                        <div className="image_overlay_wrapper relative">
+                          <ImageWithFallback
+                            width={100}
+                            height={100}
+                            quality={75}
+                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                            src={member.image as string}
+                            alt="Crew Image"
+                          />
+                          <div className="overlay" />
+                          <div className="overlay_container">
+                            <h2 className="overlay_name">
+                              {member.fname + ' ' + member.lname}
+                            </h2>
+                            <div className="position">
+                              {parseHtml(member.description ?? '')}
+                            </div>
+                          </div>
+                        </div>
+                        <div className="person_info">
+                          <h2 className="name">
+                            {member.fname + ' ' + member.lname}
+                          </h2>
+                        </div>
+                      </div>
+                    );
+                  }
+                  return null;
+                })}
+              </div>
+            </div>
+          </section>
+        )}
+
       <section className="three_info_section">
         <div className="crew_info_wrapper">
           <div className="h2_wrapper">
-            <h2>
-              CARGO &nbsp; SLING &nbsp; AND &nbsp; HUMAN &nbsp; LONGLINE &nbsp;
-              RESCUE &nbsp; MISSION
-            </h2>
+            <h2>Operations</h2>
           </div>
 
           <div className="card_container">
             {!crewDataError &&
               crewData?.map((member) => {
-                if (member.team === 'mission') {
+                if (member.team === 'operation') {
                   return (
                     <div className="crew_card" key={member.id}>
                       <div className="image_overlay_wrapper relative">

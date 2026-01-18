@@ -1,6 +1,5 @@
 import { customMetaDataGenerator } from '@/core/helpers/customMetaDataGenerator';
 import { Metadata } from 'next';
-import Description from './page';
 export async function generateMetadata({
   params,
 }: {
@@ -17,6 +16,10 @@ export async function generateMetadata({
     ogImage2: dynamicOgImage,
   });
 }
-export default function FleetsPage() {
-  return <Description />;
+export default function FleetsPage({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return <>{children}</>;
 }

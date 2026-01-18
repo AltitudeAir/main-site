@@ -6,7 +6,7 @@ import {
   RescueMissionType,
 } from '@/modules/rescue_mission/rescue_missionType';
 import mapboxgl, { Map as MapboxMap } from 'mapbox-gl';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import MissionItem from '../../(elements)/MissionItem';
 import Tab from '../../(elements)/Tab';
 
@@ -74,18 +74,18 @@ export default function Missions({
       .addTo(map.current);
   }
 
-  useEffect(() => {
-    if (map.current) {
-      return;
-    }
-    map.current = new mapboxgl.Map({
-      container: mapContainer.current!,
-      style: 'mapbox://styles/icyhotshoto/cktb59q6y7iz518uqowun3l0k',
-      center: [lng, lat],
-      zoom: zoom,
-    });
-    map.current.scrollZoom.disable();
-  }, [lng, lat, zoom]);
+  // useEffect(() => {
+  //   if (map.current) {
+  //     return;
+  //   }
+  //   map.current = new mapboxgl.Map({
+  //     container: mapContainer.current!,
+  //     style: 'mapbox://styles/icyhotshoto/cktb59q6y7iz518uqowun3l0k',
+  //     center: [lng, lat],
+  //     zoom: zoom,
+  //   });
+  //   map.current.scrollZoom.disable();
+  // }, [lng, lat, zoom]);
 
   const selectedItemHandler = (position: number) => {
     if (missionList.length === 0 || position > missionList.length - 1) {

@@ -1,3 +1,5 @@
+import { fetchData } from '@/core/api/api_client';
+import { apiPaths } from '@/core/api/apiConstants';
 import { customMetaDataGenerator } from '@/core/helpers/customMetaDataGenerator';
 import { Metadata } from 'next';
 import Image from 'next/image';
@@ -12,11 +14,13 @@ export const metadata: Metadata = customMetaDataGenerator({
   ogImage1: 'https://altitudeairnepal.com/images/resized-images/Fleets.jpg',
   ogImage2: 'https://altitudeairnepal.com/images/resized-images/Fleets.jpg',
 });
-const Page = () => {
-  const choppers: ChoppersType[] = [
-    { id: 1, name: '9N-AMS' },
-    { id: 2, name: '9N-AMX' },
-  ];
+const Page = async () => {
+  const choppers = await fetchData<{
+    data: Array<ChoppersType>;
+    status: string;
+  }>(apiPaths.chopperUrl);
+
+  console.log('choppers', choppers.data?.data);
 
   return (
     <main className="description-main">
@@ -28,33 +32,33 @@ const Page = () => {
         </div>
         <div className="flex flex-col lg:flex-row w-full h-full">
           <Link
-            href={`/description/${choppers?.[0]?.id}`}
-            className="flex-1 relative cursor-pointer w-full h-[250px] md:h-[400px] lg:h-full group"
-          >
-            <div className="absolute inset-0 bg-black opacity-70 z-10 group-hover:opacity-0 transition-opacity duration-300"></div>
-            <Image
-              src="/images/description/Altitude1.jpg"
-              alt="mountain background"
-              fill
-              className="object-cover"
-            />
-            <div className="absolute inset-0 flex items-center justify-center z-30 group-hover:hidden transition-all duration-300">
-              <span className="text-white text-2xl font-semibold">9N-AMS</span>
-            </div>
-          </Link>
-          <Link
-            href={`/description/${choppers?.[1]?.id}`}
+            href={`/description/${choppers?.data?.data?.[0]?.id}`}
             className="flex-1 relative cursor-pointer w-full h-[250px] md:h-[400px] lg:h-full group"
           >
             <div className="absolute inset-0 bg-black opacity-80 z-10 group-hover:opacity-0 transition-opacity duration-300"></div>
             <Image
-              src="/images/banner/Sheyphoksundo.jpg"
+              src="/images/description/Altitude1.jpg"
               alt="another background"
               fill
               className="object-cover"
             />
             <div className="absolute inset-0 flex items-center justify-center z-30 group-hover:hidden transition-all duration-300">
               <span className="text-white text-2xl font-semibold">9N-AMX</span>
+            </div>
+          </Link>
+          <Link
+            href={`/description/${choppers?.data?.data?.[1]?.id}`}
+            className="flex-1 relative cursor-pointer w-full h-[250px] md:h-[400px] lg:h-full group"
+          >
+            <div className="absolute inset-0 bg-black opacity-70 z-10 group-hover:opacity-0 transition-opacity duration-300"></div>
+            <Image
+              src="/images/banner/Sheyphoksundo.jpg"
+              alt="mountain background"
+              fill
+              className="object-cover"
+            />
+            <div className="absolute inset-0 flex items-center justify-center z-30 group-hover:hidden transition-all duration-300">
+              <span className="text-white text-2xl font-semibold">9N-AON</span>
             </div>
           </Link>
         </div>

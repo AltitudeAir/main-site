@@ -41,4 +41,5 @@ export const apiPaths = {
   getVolutneryHazardUrl: '/general/hazard',
   getNewsUrl: '/news/',
   footerUrl: '/footer/',
+  chopperUrl: '/chopper/',
 };

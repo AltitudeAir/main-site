@@ -26,6 +26,12 @@ const nextConfig = {
       },
       {
         protocol: 'https',
+        hostname: 'altitudeair2.suzanpradhan.com.np', //local
+        port: '',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
         hostname: 'administration.altitudeairnepal.com', //local
         port: '',
         pathname: '/**',
