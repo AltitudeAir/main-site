@@ -51,7 +51,7 @@ const Package = ({
               ref={swiperRef}
               modules={[Navigation, Pagination]}
               breakpoints={breakpoints}
-              className="w-full"
+              className="w-full font-[QuickSand-Light]"
             >
               {paginatedPackagesResponse &&
               paginatedPackagesResponse.results.length > 0 ? (

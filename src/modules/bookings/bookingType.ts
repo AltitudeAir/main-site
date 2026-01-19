@@ -23,6 +23,7 @@ export const bookingSchema = z.object({
   phone: z.string().pipe(nonempty),
   requirement: z.string().optional(),
   package: z.string().or(z.custom<PackagesDataType>()),
+  currency: z.string().pipe(nonempty),
 });
 
 export const bookingDetailSchema = bookingSchema.extend({

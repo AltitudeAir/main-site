@@ -55,7 +55,6 @@ export async function fetchData<T>(
     const response = await fetch(fullUrl.toString(), fetchOptions);
 
     const contentType = response.headers.get('Content-Type');
-
     let data: T | undefined = undefined;
     if (contentType?.includes('application/json')) {
       data = (await response.json()) as T;
@@ -64,7 +63,8 @@ export async function fetchData<T>(
     } else if (contentType?.includes('application/octet-stream')) {
       data = (await response.blob()) as T;
     }
-
+    console.log(">>>", response.json());
+    
     if (!response.ok) {
       return {
         data: undefined,

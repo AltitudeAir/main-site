@@ -14,7 +14,7 @@ interface PageSEOProps {
 export function customMetaDataGenerator({
   title,
   description = 'Altitude Air offers top-rated helicopter services and scenic package tours to beautiful destinations.',
-  canonicalUrl = 'https://9fcd-2407-1400-aa36-7c28-1022-ae5c-a105-b50f.ngrok-free.app',
+  canonicalUrl = 'https://altitudeairnepal.com',
   ogType = 'website',
   keywords = [
     'altitude air',
@@ -110,8 +110,8 @@ export function customMetaDataGenerator({
     'best Himalayan flights',
     'scenic helicopter Nepal',
   ],
-  ogImage1 = 'https://9fcd-2407-1400-aa36-7c28-1022-ae5c-a105-b50f.ngrok-free.app/images/resized-images/Home.jpg',
-  ogImage2 = 'https://9fcd-2407-1400-aa36-7c28-1022-ae5c-a105-b50f.ngrok-free.app/images/resized-images/Home.jpg',
+  ogImage1 = 'https://altitudeairnepal.com/images/resized-images/Home.jpg',
+  ogImage2 = 'https://altitudeairnepal.com/images/resized-images/Home.jpg',
   twitterCard = 'summary_large_image',
 }: PageSEOProps): Metadata {
   const siteTitle = 'Altitude Air Nepal';

@@ -46,7 +46,7 @@ export default function Highlights() {
           {aboutUsData.map((item, index) => (
             <div
               key={index}
-              className="text-[#c1d5e6] max-w-80 flex flex-col gap-2"
+              className="text-[#c1d5e6] max-w-80 flex flex-col gap-2 font-[QuickSand-Light]"
             >
               <div className="invert w-9">
                 <Image

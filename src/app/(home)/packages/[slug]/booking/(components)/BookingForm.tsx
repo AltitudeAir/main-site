@@ -63,6 +63,7 @@ const BookingForm = () => {
             email: values.email,
             phone: values.phone,
             requirement: values.requirement,
+            currency: values.currency,
           })
         )
       );
@@ -97,6 +98,7 @@ const BookingForm = () => {
       email: '',
       phone: '',
       requirement: '',
+      currency: packageData?.currency ?? 'NPR',
     },
     validate: toFormikValidate(bookingSchema),
     onSubmit,

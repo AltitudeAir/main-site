@@ -18,6 +18,7 @@ import Enquiry from '../(components)/(elements)/Enquiry';
 import EnquiryDetails from '../(components)/(elements)/EnquiryDetails';
 import About from '../(components)/(sections)/(landing)/About';
 import GetInTouch from '../(components)/(sections)/(landing)/GetInTouch';
+import HeliEverestHighlights from '../(components)/(sections)/(landing)/HeliEverestHighlights';
 import Highlights from '../(components)/(sections)/(landing)/Highlights';
 import Landing from '../(components)/(sections)/(landing)/Landing';
 import Missions from '../(components)/(sections)/(landing)/Missions';
@@ -50,6 +51,7 @@ export default async function Home() {
   return (
     <>
       {/* <SplashScreen /> */}
+
       <Enquiry>
         <EnquiryDetails />
       </Enquiry>
@@ -71,6 +73,7 @@ export default async function Home() {
       ) : (
         <></>
       )}
+      <HeliEverestHighlights />
       {/* <News /> */}
       {/* <Gallery /> */}
       {/* <GalleryV2 /> */}

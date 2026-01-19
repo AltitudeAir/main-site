@@ -29,6 +29,8 @@ const bookingApi = baseApi
           if (payload.phone) formData.append('phone', payload.phone);
           if (payload.requirement)
             formData.append('requirement', payload.requirement);
+          formData.append('currency', payload.currency);
+
           return {
             url: `${apiPaths.bookingUrl}`,
             method: 'POST',
