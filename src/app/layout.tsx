@@ -64,7 +64,7 @@ export default function RootLayout({
       <body className={`${inter.className} ${gilroy.variable}`}>
         <Notification />
         <Provider>
-          <main>
+          <main className="w-full overflow-hidden">
             <Navbar />
             {children}
             <FooterV2 />
