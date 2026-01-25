@@ -25,7 +25,7 @@ async function Landing({
       ) : (
         <></>
       )}
-      <div className="w-full h-full z-10 container mx-auto flex items-center">
+      <div className="w-full h-full z-10 flex items-center">
         <div className="border-8 border-custom-blue bg-custom-blue/50 w-full max-w-md py-4 px-5 ">
           <h2 className="text-4xl font-black text-white">
             <span>Above</span> <span className="text-[]">and</span>{' '}

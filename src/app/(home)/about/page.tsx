@@ -246,7 +246,7 @@ export default async function About() {
           </div>
 
           <div className="card_container">
-            {!crewDataError &&
+            {!crewDataError ? (
               crewData?.map((member, index) => {
                 if (member.team === 'technical') {
                   return (
@@ -279,7 +279,10 @@ export default async function About() {
                   );
                 }
                 return null;
-              })}
+              })
+            ) : (
+              <></>
+            )}
           </div>
         </div>
       </section>
@@ -291,7 +294,7 @@ export default async function About() {
           </div>
 
           <div className="card_container">
-            {!crewDataError &&
+            {!crewDataError ? (
               crewData?.map((member, index) => {
                 if (member.team === 'quality') {
                   return (
@@ -324,7 +327,10 @@ export default async function About() {
                   );
                 }
                 return null;
-              })}
+              })
+            ) : (
+              <></>
+            )}
           </div>
         </div>
       </section>
@@ -336,7 +342,7 @@ export default async function About() {
           </div>
 
           <div className="card_container">
-            {!crewDataError &&
+            {!crewDataError ? (
               crewData?.map((member, index) => {
                 if (member.team === 'safety') {
                   return (
@@ -369,12 +375,15 @@ export default async function About() {
                   );
                 }
                 return null;
-              })}
+              })
+            ) : (
+              <></>
+            )}
           </div>
         </div>
       </section>
 
-      {!crewDataError &&
+      {!crewDataError ? (
         crewData?.filter((member) => member.team === 'mission').length && (
           <section className="three_info_section">
             <div className="crew_info_wrapper">
@@ -422,7 +431,10 @@ export default async function About() {
               </div>
             </div>
           </section>
-        )}
+        )
+      ) : (
+        <></>
+      )}
 
       <section className="three_info_section">
         <div className="crew_info_wrapper">
@@ -431,7 +443,7 @@ export default async function About() {
           </div>
 
           <div className="card_container">
-            {!crewDataError &&
+            {!crewDataError ? (
               crewData?.map((member) => {
                 if (member.team === 'operation') {
                   return (
@@ -464,7 +476,10 @@ export default async function About() {
                   );
                 }
                 return null;
-              })}
+              })
+            ) : (
+              <></>
+            )}
           </div>
         </div>
       </section>
